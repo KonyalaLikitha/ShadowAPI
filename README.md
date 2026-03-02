@@ -32,16 +32,16 @@ shadowapi connect --backend http://localhost:8080
 
 ## Features
 
-- ✅ Dynamic mock generation from API contracts
-- ✅ Stateful request/response simulation
-- ✅ Automatic proxy forwarding
-- ✅ Gradual backend integration
-- ✅ Request logging & inspection
-- ✅ Chrome DevTools extension
+- Dynamic mock generation from API contracts
+- Stateful request/response simulation
+- Automatic proxy forwarding
+- Gradual backend integration
+- Request logging & inspection
+- Chrome DevTools extension
 
 ## Project Status
 
-🚧 **Active Development** — Week 1/4
+**Active Development** — Week 1/4
 
 Current milestone: Core infrastructure & basic mock server
 
@@ -55,15 +55,39 @@ Frontend → ShadowAPI Gateway → Mock Engine (fallback)
 
 ## Repository Structure
 
-```
+```text
 shadowapi/
-├── engine/      # Mock data generation & state
+├── engine/      # Contract-driven mock engine
 ├── gateway/     # Proxy & routing logic
 ├── cli/         # Command-line interface
 ├── extension/   # Chrome DevTools panel
 ├── examples/    # Sample projects
-└── docs/        # Documentation
+├── docs/        # Documentation
+├── CONTRIBUTING.md
+├── LICENSE
+└── README.md
 ```
+Folder Overview
+
+engine/ — Mock Engine (Core Simulation)
+Responsible for generating realistic backend behavior from API contracts.
+Includes schema parsing, mock data generation, in-memory state management, and error simulation.
+
+gateway/ — Development Gateway & Proxy
+Acts as the entry point for all API requests.
+Routes requests to mock responses or forwards them to the real backend when available, with automatic fallback for missing endpoints.
+
+cli/ — Developer Interface
+Provides the shadowapi CLI for initializing projects, loading contracts, starting the server, and connecting real backends.
+
+extension/ — DevTools Integration
+A Chrome DevTools panel for inspecting requests, toggling mock/real modes, and visualizing API behavior during development.
+
+examples/ — Sample Projects
+Contains example frontend applications demonstrating how ShadowAPI integrates into real workflows.
+
+docs/ — Documentation & Architecture
+Holds architecture diagrams, design decisions, and advanced usage guides.
 
 ## Contributing
 
