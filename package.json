@@ -1,0 +1,17 @@
+{
+  "name": "shadowapi",
+  "version": "0.1.0",
+  "description": "Development gateway for mock-to-real backend switching",
+  "main": "gateway/server.js",
+  "bin": {
+    "shadowapi": "./cli/index.js"
+  },
+  "scripts": {
+    "start": "node gateway/server.js"
+  },
+  "keywords": ["mock", "api", "gateway", "proxy"],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
