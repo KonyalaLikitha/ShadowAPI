@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "ShadowAPI DevTools",
+  "version": "1.0.0",
+  "description": "DevTools extension for ShadowAPI",
+  "devtools_page": "devtools.html",
+  "permissions": []
+}
