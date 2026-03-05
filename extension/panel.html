@@ -1,13 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ShadowAPI DevTools</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>ShadowAPI DevTools</h1>
+
+  <div class="header">
+    <h2>ShadowAPI Control Panel</h2>
+
+    <div class="header-controls">
+      <div class="mode-badge" id="modeBadge"></div>
+      <button id="toggle" class="btn btn-primary"></button>
+      <button id="clear" class="btn btn-secondary">Clear Logs</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <span>Total Requests: <span id="requestCount">0</span></span>
+  </div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Filter requests..." />
+  </div>
+
+  <div id="logs"></div>
+
   <script src="panel.js"></script>
 </body>
 </html>
