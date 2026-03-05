@@ -2,18 +2,19 @@
 function handleRequest(req) {
   const { path, method } = req;
 
-  // First mock route
-  if (path === "/users" && method === "GET") {
+  if (method === "GET" && path === "/users") {
     return {
       type: "mock",
-      response: [
-        { id: 1, name: "Alice" },
-        { id: 2, name: "Bob" }
-      ]
+      response: {
+        success: true,
+        data: [
+          { id: 1, name: "Alice" },
+          { id: 2, name: "Bob" }
+        ]
+      }
     };
   }
 
-  // Everything else forward
   return { type: "forward" };
 }
 
