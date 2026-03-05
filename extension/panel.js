@@ -1,17 +1,21 @@
-let currentMode = 'REAL';
+let currentMode = "REAL";
 let requestCount = 0;
 
-const modeStatusEl = document.getElementById('modeBadge');
-const toggleBtn = document.getElementById('toggle');
-const clearBtn = document.getElementById('clear');
-const logsEl = document.getElementById('logs');
-const requestCountEl = document.getElementById('requestCount');
-const searchInput = document.getElementById('searchInput');
+const modeStatusEl = document.getElementById("modeBadge");
+const toggleBtn = document.getElementById("toggle");
+const clearBtn = document.getElementById("clear");
+const logsEl = document.getElementById("logs");
+const requestCountEl = document.getElementById("requestCount");
+const searchInput = document.getElementById("searchInput");
 
 function updateModeUI() {
   modeStatusEl.textContent = currentMode;
   modeStatusEl.className = `mode-badge mode-${currentMode.toLowerCase()}`;
-  toggleBtn.textContent = `Switch to ${currentMode === 'REAL' ? 'Mock' : 'Real'}`;
+
+  toggleBtn.textContent =
+    currentMode === "REAL"
+      ? "Switch to Mock"
+      : "Switch to Real";
 }
 
 function updateRequestCount() {
@@ -19,90 +23,114 @@ function updateRequestCount() {
 }
 
 function getMethodBadgeClass(method) {
-  const classMap = {
-    GET: 'method-get',
-    POST: 'method-post',
-    PUT: 'method-put',
-    DELETE: 'method-delete'
+
+  const map = {
+    GET: "method-get",
+    POST: "method-post",
+    PUT: "method-put",
+    DELETE: "method-delete"
   };
-  return classMap[method] || 'method-default';
+
+  return map[method] || "method-default";
 }
 
 function getStatusBadgeClass(status) {
-  if (status >= 200 && status < 300) return 'status-success';
-  if (status >= 400 && status < 500) return 'status-warning';
-  if (status >= 500) return 'status-error';
-  return 'status-default';
+
+  if (status >= 200 && status < 300) return "status-success";
+
+  if (status >= 400 && status < 500) return "status-warning";
+
+  if (status >= 500) return "status-error";
+
+  return "status-default";
 }
 
 function createRequestEntry(request) {
 
-  const entry = document.createElement('div');
-  entry.className = 'log-entry';
+  const entry = document.createElement("div");
+  entry.className = "log-entry";
 
-  const header = document.createElement('div');
-  header.className = 'log-header';
+  const header = document.createElement("div");
+  header.className = "log-header";
 
-  const methodBadge = document.createElement('span');
-  methodBadge.className = `badge ${getMethodBadgeClass(request.request.method)}`;
+  const methodBadge = document.createElement("span");
+  methodBadge.className =
+    `badge ${getMethodBadgeClass(request.request.method)}`;
+
   methodBadge.textContent = request.request.method;
 
-  const statusBadge = document.createElement('span');
-  statusBadge.className = `badge ${getStatusBadgeClass(request.response.status)}`;
+  const statusBadge = document.createElement("span");
+  statusBadge.className =
+    `badge ${getStatusBadgeClass(request.response.status)}`;
+
   statusBadge.textContent = request.response.status;
 
-  const modeBadge = document.createElement('span');
-  modeBadge.className = `badge mode-${currentMode.toLowerCase()}`;
-  modeBadge.textContent = currentMode;
+  const url = document.createElement("span");
+  url.className = "log-url";
 
-  const url = document.createElement('span');
-  url.className = 'log-url';
   url.textContent = request.request.url;
 
-  const time = document.createElement('span');
-  time.className = 'log-time';
-  time.textContent = new Date().toLocaleTimeString();
+  const duration = document.createElement("span");
+  duration.className = "log-duration";
+
+  duration.textContent =
+    request.time ? `${request.time} ms` : "";
 
   header.appendChild(methodBadge);
-  header.appendChild(modeBadge);
   header.appendChild(statusBadge);
   header.appendChild(url);
-  header.appendChild(time);
+  header.appendChild(duration);
 
-  const details = document.createElement('div');
-  details.className = 'log-details';
+  const details = document.createElement("div");
+  details.className = "log-details";
 
   entry.appendChild(header);
   entry.appendChild(details);
 
-  header.addEventListener('click', () => toggleDetails(entry, request));
+  header.addEventListener(
+    "click",
+    () => toggleDetails(entry, request)
+  );
 
   return entry;
 }
 
 function toggleDetails(entry, request) {
 
-  const details = entry.querySelector('.log-details');
+  const details = entry.querySelector(".log-details");
 
-  if (details.classList.contains('expanded')) {
-    details.classList.remove('expanded');
-    details.innerHTML = '';
+  if (details.classList.contains("expanded")) {
+
+    details.classList.remove("expanded");
+
+    details.innerHTML = "";
+
   } else {
 
     request.getContent((content) => {
 
-      const pre = document.createElement('pre');
+      const pre = document.createElement("pre");
 
       try {
+
         const parsed = JSON.parse(content);
-        pre.textContent = JSON.stringify(parsed, null, 2);
+
+        pre.textContent =
+          JSON.stringify(parsed, null, 2);
+
       } catch {
-        pre.textContent = content || 'No response body';
+
+        pre.textContent =
+          content || "No response body";
+
       }
 
-      details.innerHTML = '';
+      details.innerHTML = "";
+
       details.appendChild(pre);
-      details.classList.add('expanded');
+
+      details.classList.add("expanded");
+
     });
   }
 }
@@ -119,46 +147,61 @@ function addRequestLog(request) {
 }
 
 function clearLogs() {
-  logsEl.innerHTML = '';
+
+  logsEl.innerHTML = "";
+
   requestCount = 0;
+
   updateRequestCount();
 }
 
-searchInput.addEventListener('input', () => {
+searchInput.addEventListener("input", () => {
 
-  const filter = searchInput.value.toLowerCase();
+  const filter =
+    searchInput.value.toLowerCase();
 
-  const logs = document.querySelectorAll('.log-entry');
+  const logs =
+    document.querySelectorAll(".log-entry");
 
-  logs.forEach(log => {
+  logs.forEach((log) => {
 
-    const text = log.innerText.toLowerCase();
+    const text =
+      log.innerText.toLowerCase();
 
-    log.style.display = text.includes(filter) ? 'block' : 'none';
+    log.style.display =
+      text.includes(filter)
+        ? "block"
+        : "none";
   });
 });
 
-chrome.storage.local.get(['mode'], (result) => {
+chrome.storage.local.get(["mode"], (result) => {
 
-  currentMode = result.mode || 'REAL';
+  currentMode = result.mode || "REAL";
 
   updateModeUI();
 });
 
-toggleBtn.addEventListener('click', () => {
+toggleBtn.addEventListener("click", () => {
 
-  currentMode = currentMode === 'REAL' ? 'MOCK' : 'REAL';
+  currentMode =
+    currentMode === "REAL"
+      ? "MOCK"
+      : "REAL";
 
   chrome.storage.local.set({ mode: currentMode });
 
   updateModeUI();
 });
 
-clearBtn.addEventListener('click', clearLogs);
+clearBtn.addEventListener("click", clearLogs);
 
-chrome.devtools.network.onRequestFinished.addListener((request) => {
+chrome.devtools.network.onRequestFinished.addListener(
+  (request) => {
 
-  if (!request.request.url.includes('/api')) return;
+    if (!request.request.url.includes("/api"))
+      return;
 
-  addRequestLog(request);
-});
+    addRequestLog(request);
+  }
+);
