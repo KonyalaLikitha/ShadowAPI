@@ -10,7 +10,9 @@ const searchInput = document.getElementById("searchInput");
 
 function updateModeUI() {
   modeStatusEl.textContent = currentMode;
-  modeStatusEl.className = `mode-badge mode-${currentMode.toLowerCase()}`;
+
+  modeStatusEl.className =
+    `mode-badge mode-${currentMode.toLowerCase()}`;
 
   toggleBtn.textContent =
     currentMode === "REAL"
@@ -22,64 +24,55 @@ function updateRequestCount() {
   requestCountEl.textContent = requestCount;
 }
 
-function getMethodBadgeClass(method) {
+function getStatusClass(status) {
 
-  const map = {
-    GET: "method-get",
-    POST: "method-post",
-    PUT: "method-put",
-    DELETE: "method-delete"
-  };
+  if (status >= 200 && status < 300)
+    return "status-success";
 
-  return map[method] || "method-default";
-}
+  if (status >= 400 && status < 500)
+    return "status-warning";
 
-function getStatusBadgeClass(status) {
+  if (status >= 500)
+    return "status-error";
 
-  if (status >= 200 && status < 300) return "status-success";
-
-  if (status >= 400 && status < 500) return "status-warning";
-
-  if (status >= 500) return "status-error";
-
-  return "status-default";
+  return "";
 }
 
 function createRequestEntry(request) {
 
   const entry = document.createElement("div");
-  entry.className = "log-entry";
+
+  entry.className =
+    `log-entry ${getStatusClass(request.response.status)}`;
 
   const header = document.createElement("div");
   header.className = "log-header";
 
-  const methodBadge = document.createElement("span");
-  methodBadge.className =
-    `badge ${getMethodBadgeClass(request.request.method)}`;
+  const method = document.createElement("span");
+  method.className = "method";
 
-  methodBadge.textContent = request.request.method;
+  method.textContent = request.request.method;
 
-  const statusBadge = document.createElement("span");
-  statusBadge.className =
-    `badge ${getStatusBadgeClass(request.response.status)}`;
+  const status = document.createElement("span");
+  status.className = "status";
 
-  statusBadge.textContent = request.response.status;
+  status.textContent = request.response.status;
 
   const url = document.createElement("span");
   url.className = "log-url";
 
   url.textContent = request.request.url;
 
-  const duration = document.createElement("span");
-  duration.className = "log-duration";
+  const time = document.createElement("span");
+  time.className = "log-time";
 
-  duration.textContent =
+  time.textContent =
     request.time ? `${request.time} ms` : "";
 
-  header.appendChild(methodBadge);
-  header.appendChild(statusBadge);
+  header.appendChild(method);
+  header.appendChild(status);
   header.appendChild(url);
-  header.appendChild(duration);
+  header.appendChild(time);
 
   const details = document.createElement("div");
   details.className = "log-details";
@@ -122,7 +115,6 @@ function toggleDetails(entry, request) {
 
         pre.textContent =
           content || "No response body";
-
       }
 
       details.innerHTML = "";
@@ -130,7 +122,6 @@ function toggleDetails(entry, request) {
       details.appendChild(pre);
 
       details.classList.add("expanded");
-
     });
   }
 }
