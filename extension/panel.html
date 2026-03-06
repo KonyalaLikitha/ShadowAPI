@@ -3,6 +3,7 @@
 <head>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
   <div class="header">
@@ -10,8 +11,12 @@
 
     <div class="header-controls">
       <div class="mode-badge" id="modeBadge"></div>
+
       <button id="toggle" class="btn btn-primary"></button>
-      <button id="clear" class="btn btn-secondary">Clear Logs</button>
+
+      <button id="clear" class="btn btn-secondary">
+        Clear Logs
+      </button>
     </div>
   </div>
 
@@ -19,12 +24,17 @@
     <span>Total Requests: <span id="requestCount">0</span></span>
   </div>
 
-  <div class="search-box">
-    <input type="text" id="searchInput" placeholder="Filter requests..." />
+  <div class="search">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search requests..."
+    />
   </div>
 
   <div id="logs"></div>
 
   <script src="panel.js"></script>
+
 </body>
 </html>
