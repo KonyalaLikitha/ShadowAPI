@@ -4,11 +4,14 @@ let requestCount = 0;
 const modeStatusEl = document.getElementById("modeBadge");
 const toggleBtn = document.getElementById("toggle");
 const clearBtn = document.getElementById("clear");
+const collapseBtn = document.getElementById("collapse");
+
 const logsEl = document.getElementById("logs");
 const requestCountEl = document.getElementById("requestCount");
 const searchInput = document.getElementById("searchInput");
 
 function updateModeUI() {
+
   modeStatusEl.textContent = currentMode;
 
   modeStatusEl.className =
@@ -24,26 +27,10 @@ function updateRequestCount() {
   requestCountEl.textContent = requestCount;
 }
 
-function getStatusClass(status) {
-
-  if (status >= 200 && status < 300)
-    return "status-success";
-
-  if (status >= 400 && status < 500)
-    return "status-warning";
-
-  if (status >= 500)
-    return "status-error";
-
-  return "";
-}
-
 function createRequestEntry(request) {
 
   const entry = document.createElement("div");
-
-  entry.className =
-    `log-entry ${getStatusClass(request.response.status)}`;
+  entry.className = "log-entry";
 
   const header = document.createElement("div");
   header.className = "log-header";
@@ -63,16 +50,9 @@ function createRequestEntry(request) {
 
   url.textContent = request.request.url;
 
-  const time = document.createElement("span");
-  time.className = "log-time";
-
-  time.textContent =
-    request.time ? `${request.time} ms` : "";
-
   header.appendChild(method);
   header.appendChild(status);
   header.appendChild(url);
-  header.appendChild(time);
 
   const details = document.createElement("div");
   details.className = "log-details";
@@ -100,26 +80,41 @@ function toggleDetails(entry, request) {
 
   } else {
 
+    const container = document.createElement("div");
+
     request.getContent((content) => {
 
-      const pre = document.createElement("pre");
+      const body = document.createElement("pre");
 
       try {
 
         const parsed = JSON.parse(content);
 
-        pre.textContent =
+        body.textContent =
           JSON.stringify(parsed, null, 2);
 
       } catch {
 
-        pre.textContent =
+        body.textContent =
           content || "No response body";
       }
 
+      container.appendChild(body);
+
+      const headers = document.createElement("pre");
+
+      headers.textContent =
+        JSON.stringify(
+          request.request.headers,
+          null,
+          2
+        );
+
+      container.appendChild(headers);
+
       details.innerHTML = "";
 
-      details.appendChild(pre);
+      details.appendChild(container);
 
       details.classList.add("expanded");
     });
@@ -144,6 +139,18 @@ function clearLogs() {
   requestCount = 0;
 
   updateRequestCount();
+}
+
+function collapseAll() {
+
+  document
+    .querySelectorAll(".log-details")
+    .forEach((d) => {
+
+      d.classList.remove("expanded");
+
+      d.innerHTML = "";
+    });
 }
 
 searchInput.addEventListener("input", () => {
@@ -186,6 +193,8 @@ toggleBtn.addEventListener("click", () => {
 });
 
 clearBtn.addEventListener("click", clearLogs);
+
+collapseBtn.addEventListener("click", collapseAll);
 
 chrome.devtools.network.onRequestFinished.addListener(
   (request) => {
