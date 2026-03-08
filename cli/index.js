@@ -4,6 +4,12 @@ const fs = require('fs');
 const path = require('path');
 const { getConfig } = require('../config/config');
 
+const log = {
+  success: (msg) => console.log(`✓ ShadowAPI: ${msg}`),
+  error: (msg) => console.log(`✗ ShadowAPI: ${msg}`),
+  info: (msg) => console.log(`ShadowAPI: ${msg}`)
+};
+
 const args = process.argv.slice(2);
 const command = args[0];
 
@@ -36,7 +42,7 @@ switch (command) {
         backend: null
       }, null, 2));
 
-      console.log('Created shadowapi.config.json');
+      log.success('Created shadowapi.config.json');
     }
 
     if (!fs.existsSync(openapiPath)) {
@@ -52,7 +58,7 @@ paths:
           description: Success
 `);
 
-      console.log('Created openapi.yaml');
+      log.success('Created openapi.yaml');
     }
 
     break;
@@ -60,15 +66,15 @@ paths:
   case 'start':
 
     if (!configExists()) {
-      console.log('No config found. Run: shadowapi init');
+      log.error('No config found. Run: shadowapi init');
       process.exit(1);
     }
 
     const config = getConfig();
 
-    console.log('Starting ShadowAPI...');
-    console.log('Mode:', config.mode);
-    console.log('Port:', config.port);
+    log.info('Starting ShadowAPI...');
+    log.info(`Mode: ${config.mode}`);
+    log.info(`Port: ${config.port}`);
 
     break;
 
