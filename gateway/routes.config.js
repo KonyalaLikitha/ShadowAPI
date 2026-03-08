@@ -8,5 +8,11 @@ module.exports = [
     method: 'GET',
     path: '/api/products',
     response: { products: [{ id: 1, title: 'Laptop' }] }
+  },
+  {
+    method: 'POST',
+    path: '/api/users',
+    status: 201,
+    response: { id: 3, name: 'New User', created: true }
   }
 ];
