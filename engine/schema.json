@@ -10,6 +10,16 @@
           { "id": 2, "name": "Bob" }
         ]
       }
+    },
+    {
+      "method": "GET",
+      "path": "/orders",
+      "response": {
+        "success": true,
+        "data": [
+          { "id": 101, "item": "Laptop" }
+        ]
+      }
     }
   ]
 }

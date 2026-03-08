@@ -78,6 +78,7 @@ paths:
 
     break;
 
+
   default:
     console.log(`
 ShadowAPI CLI
