@@ -55,14 +55,13 @@ ShadowAPI provides a Chrome DevTools extension that allows developers to inspect
 ### Screenshots
 
 #### DevTools Panel
-![DevTools Panel](extension/docs/images/panel.png)
+![DevTools Panel](extension/docs/panel.png)
 
 #### Request Logs
-![Request Logs](extension/docs/images/logs.png)
+![Request Logs](extension/docs/logs.png)
 
 #### Response Viewer
-![Response Viewer](extension/docs/images/viewer.png)
-
+![Response Viewer](extension/docs/viewer.png)
 ## Project Status
 
 🚧 **Active Development** — Week 1/4
