@@ -38,6 +38,30 @@ shadowapi connect --backend http://localhost:8080
 - ✅ Gradual backend integration
 - ✅ Request logging & inspection
 - ✅ Chrome DevTools extension
+## DevTools Extension
+
+ShadowAPI provides a Chrome DevTools extension that allows developers to inspect API requests in real time.
+
+### Features
+
+- API request monitoring
+- Mock / Real backend toggle
+- Request search and filtering
+- Expandable response viewer
+- Request header inspection
+- Request counter
+- Clear and collapse logs
+
+### Screenshots
+
+#### DevTools Panel
+![DevTools Panel](extension/docs/images/panel.png)
+
+#### Request Logs
+![Request Logs](extension/docs/images/logs.png)
+
+#### Response Viewer
+![Response Viewer](extension/docs/images/viewer.png)
 
 ## Project Status
 
