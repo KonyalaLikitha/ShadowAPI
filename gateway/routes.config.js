@@ -6,8 +6,18 @@ module.exports = [
   },
   {
     method: 'GET',
+    path: '/api/users/:id',
+    response: { id: 1, name: 'John', email: 'john@example.com' }
+  },
+  {
+    method: 'GET',
     path: '/api/products',
     response: { products: [{ id: 1, title: 'Laptop' }] }
+  },
+  {
+    method: 'GET',
+    path: '/api/products/:id',
+    response: { id: 1, title: 'Laptop', price: 999 }
   },
   {
     method: 'POST',
