@@ -38,7 +38,30 @@ shadowapi connect --backend http://localhost:8080
 - ✅ Gradual backend integration
 - ✅ Request logging & inspection
 - ✅ Chrome DevTools extension
+## DevTools Extension
 
+ShadowAPI provides a Chrome DevTools extension that allows developers to inspect API requests in real time.
+
+### Features
+
+- API request monitoring
+- Mock / Real backend toggle
+- Request search and filtering
+- Expandable response viewer
+- Request header inspection
+- Request counter
+- Clear and collapse logs
+
+### Screenshots
+
+#### DevTools Panel
+![DevTools Panel](extension/docs/panel.png)
+
+#### Request Logs
+![Request Logs](extension/docs/logs.png)
+
+#### Response Viewer
+![Response Viewer](extension/docs/viewer.png)
 ## Project Status
 
 🚧 **Active Development** — Week 1/4
@@ -64,6 +87,53 @@ shadowapi/
 ├── examples/    # Sample projects
 └── docs/        # Documentation
 ```
+## Example Frontend Demo
+
+ShadowAPI includes a small demo frontend that generates API requests so the DevTools extension can inspect them.
+
+### Location
+
+```
+examples/demo-app/
+```
+
+### How to Run the Demo
+
+1. Open the demo page in your browser:
+
+```
+examples/demo-app/index.html
+```
+
+2. Open Chrome DevTools:
+
+```
+F12 → ShadowAPI tab
+```
+
+3. Click **Load Users** on the demo page.
+
+This will trigger an API request:
+
+```
+GET https://jsonplaceholder.typicode.com/users
+```
+
+4. The request will appear inside the **ShadowAPI DevTools panel**, where you can inspect:
+
+* request URL
+* HTTP method
+* response status
+* response body
+* headers
+
+### Purpose
+
+The demo project is provided to:
+
+* test the DevTools extension
+* generate API requests
+* demonstrate how ShadowAPI inspects network traffic
 
 ## Contributing
 

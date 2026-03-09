@@ -199,9 +199,7 @@ collapseBtn.addEventListener("click", collapseAll);
 chrome.devtools.network.onRequestFinished.addListener(
   (request) => {
 
-    if (!request.request.url.includes("/api"))
-      return;
-
     addRequestLog(request);
+
   }
 );
