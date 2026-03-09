@@ -13,6 +13,20 @@ const log = {
 const args = process.argv.slice(2);
 const command = args[0];
 
+const parseArgs = (args) => {
+  const parsed = {};
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--port' && args[i + 1]) {
+      parsed.port = parseInt(args[i + 1], 10);
+      i++;
+    } else if (args[i] === '--mode' && args[i + 1]) {
+      parsed.mode = args[i + 1];
+      i++;
+    }
+  }
+  return parsed;
+};
+
 const configExists = () =>
   fs.existsSync(path.join(process.cwd(), 'shadowapi.config.json'));
 
@@ -70,7 +84,8 @@ paths:
       process.exit(1);
     }
 
-    const config = getConfig();
+    const overrides = parseArgs(args.slice(1));
+    const config = getConfig(overrides);
 
     log.info('Starting ShadowAPI...');
     log.info(`Mode: ${config.mode}`);

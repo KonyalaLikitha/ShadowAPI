@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-function getConfig() {
+function getConfig(overrides = {}) {
   const configPath = path.join(process.cwd(), 'shadowapi.config.json');
 
   if (!fs.existsSync(configPath)) {
@@ -18,8 +18,8 @@ function getConfig() {
   }
 
   return {
-    port: config.port || 3000,
-    mode: config.mode || 'mock',
+    port: overrides.port || config.port || 3000,
+    mode: overrides.mode || config.mode || 'mock',
     contract: config.contract || 'openapi.yaml',
     backend: config.backend || null
   };
