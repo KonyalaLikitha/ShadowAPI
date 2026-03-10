@@ -17,10 +17,20 @@ const parseArgs = (args) => {
   const parsed = {};
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--port' && args[i + 1]) {
-      parsed.port = parseInt(args[i + 1], 10);
+      const port = parseInt(args[i + 1], 10);
+      if (isNaN(port) || port < 1 || port > 65535) {
+        log.error('Invalid port value');
+        process.exit(1);
+      }
+      parsed.port = port;
       i++;
     } else if (args[i] === '--mode' && args[i + 1]) {
-      parsed.mode = args[i + 1];
+      const mode = args[i + 1];
+      if (!['mock', 'proxy', 'hybrid'].includes(mode)) {
+        log.error('Invalid mode value');
+        process.exit(1);
+      }
+      parsed.mode = mode;
       i++;
     }
   }
