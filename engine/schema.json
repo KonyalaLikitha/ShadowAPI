@@ -7,6 +7,9 @@
     {
       "method": "GET",
       "path": "/orders"
-    }
+    },
+    { "method": "GET", "path": "/users" },
+    { "method": "POST", "path": "/users" },
+    { "method": "GET", "path": "/orders" }
   ]
 }
