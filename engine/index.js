@@ -1,6 +1,6 @@
 //Basic engine that forwards all requests to the next handler in the chain.
 const schema = require("./schema.json");
-const { generateUsers } = require("./dataGenerator");
+const { generateObjects } = require("./dataGenerator");
 
 function handleRequest(req) {
   const { path, method } = req;
@@ -12,13 +12,12 @@ function handleRequest(req) {
   if (route) {
 
     let response = route.response;
+    const resource = path.replace("/", "");
 
-    if (path === "/users") {
-      response = {
-        success: true,
-        data: generateUsers()
-      };
-    }
+    response = {
+      success: true,
+      data: generateObjects(resource)
+    };
 
     return {
       type: "mock",
