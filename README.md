@@ -165,5 +165,15 @@ MIT License - see [LICENSE](LICENSE)
 - [ ] Full documentation
 
 ---
+## Example Documentation
+
+Detailed documentation for the demo frontend can be found here:
+
+```
+docs/example-usage.md
+```
+
+This guide explains how to run the demo project and inspect API requests using the ShadowAPI DevTools extension.
+
 
 **Built for developers who ship fast.**
