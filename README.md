@@ -30,6 +30,19 @@ shadowapi start --contract api-spec.yaml
 shadowapi connect --backend http://localhost:8080
 ```
 
+## Demo Example
+
+ShadowAPI includes a small frontend demo that generates API requests so you can easily test the DevTools extension.
+
+### Run the Demo
+
+1. Open the demo file: examples/demo-app/index.html
+2. Click **Load Users** to generate an API request.
+3. Open **Chrome DevTools**: F12 → ShadowAPI Tab
+4. The request will appear inside the **ShadowAPI Control Panel**.
+
+This demo is included to make testing the DevTools extension simple for contributors and developers.
+
 ## Features
 
 - ✅ Dynamic mock generation from API contracts
