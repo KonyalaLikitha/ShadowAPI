@@ -1,29 +1,33 @@
-//Basic engine that forwards all requests to the next handler in the chain.
 const schema = require("./schema.json");
-const { generateUsers } = require("./dataGenerator");
+const { generateObjects } = require("./dataGenerator");
+const store = require("./stateStore");
 
 function handleRequest(req) {
-  const { path, method } = req;
+  const { path, method, body } = req;
 
   const route = schema.routes.find(
     (r) => r.method === method && r.path === path
   );
 
+  const resource = path.replace("/", "");
+
   if (route) {
 
-    let response = route.response;
-
-    if (path === "/users") {
-      response = {
-        success: true,
-        data: generateUsers()
+    if (method === "GET") {
+      const data = store.get(resource);
+      return {
+        type: "mock",
+        response: { success: true, data }
       };
     }
 
-    return {
-      type: "mock",
-      response
-    };
+    if (method === "POST") {
+      const created = store.add(resource, body);
+      return {
+        type: "mock",
+        response: { success: true, data: created }
+      };
+    }
   }
 
   return { type: "forward" };

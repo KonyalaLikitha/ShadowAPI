@@ -12,8 +12,7 @@ ShadowAPI is an open-source development gateway that generates realistic mock se
 - **Smart Fallback**: Missing endpoints auto-fallback to mocks
 - **Local-First**: No cloud dependencies, reproducible setups
 
-Perfect for student projects, hackathons, CI environments, and open-source contributors.
-
+Ideal for student projects, hackathons, CI environments, and open-source development.
 ## Quick Start
 
 ```bash
@@ -29,19 +28,6 @@ shadowapi start --contract api-spec.yaml
 # Connect real backend (when ready)
 shadowapi connect --backend http://localhost:8080
 ```
-
-## Demo Example
-
-ShadowAPI includes a small frontend demo that generates API requests so you can easily test the DevTools extension.
-
-### Run the Demo
-
-1. Open the demo file: examples/demo-app/index.html
-2. Click **Load Users** to generate an API request.
-3. Open **Chrome DevTools**: F12 → ShadowAPI Tab
-4. The request will appear inside the **ShadowAPI Control Panel**.
-
-This demo is included to make testing the DevTools extension simple for contributors and developers.
 
 ## Features
 
@@ -77,9 +63,23 @@ ShadowAPI provides a Chrome DevTools extension that allows developers to inspect
 ![Response Viewer](extension/docs/viewer.png)
 ## Project Status
 
-🚧 **Active Development** — Week 1/4
+🚧 **Active Development** — Week 2/4
 
-Current milestone: Core infrastructure & basic mock server
+Current milestone: Building a functional mock server and developer tooling.
+
+Completed so far:
+
+* Chrome DevTools extension for API request inspection
+* Request logging and response viewer
+* Mock/Real mode toggle
+* Example frontend demo project
+* Developer documentation and usage guides
+
+Next milestone:
+
+* Stateful mock API responses
+* Dynamic route handling
+* Improved developer experience
 
 ## Architecture
 
@@ -158,12 +158,33 @@ MIT License - see [LICENSE](LICENSE)
 
 ## Roadmap
 
+## Roadmap
 - [x] Project setup
 - [ ] Basic mock server
 - [ ] Proxy forwarding
-- [ ] DevTools extension
+- [x] DevTools extension
 - [ ] Full documentation
 
 ---
+## Example Documentation
+
+Detailed documentation for the demo frontend can be found here:
+
+```
+docs/example-usage.md
+```
+
+This guide explains how to run the demo project and inspect API requests using the ShadowAPI DevTools extension.
+
+## DevTools Guide
+
+Detailed instructions for using the Chrome DevTools extension are available here:
+
+```
+docs/devtools-guide.md
+```
+
+This guide explains how to inspect API requests, view responses, and debug requests using the ShadowAPI Control Panel.
+
 
 **Built for developers who ship fast.**
