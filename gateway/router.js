@@ -3,10 +3,20 @@ function registerRoutes(app, routes) {
     const { method, path, response, status = 200 } = route;
     
     app[method.toLowerCase()](path, (req, res) => {
-      // Inject params into response if present
-      const responseData = typeof response === 'function' 
-        ? response(req.params, req.body) 
-        : { ...response, params: req.params };
+      let responseData;
+      
+      if (typeof response === 'function') {
+        responseData = response(req.params, req.body, req.query);
+      } else if (path.includes(':')) {
+        responseData = { ...response };
+        Object.keys(req.params).forEach(key => {
+          if (responseData[key] !== undefined) {
+            responseData[key] = req.params[key];
+          }
+        });
+      } else {
+        responseData = response;
+      }
       
       res.status(status).json(responseData);
     });

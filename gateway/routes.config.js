@@ -7,7 +7,11 @@ module.exports = [
   {
     method: 'GET',
     path: '/api/users/:id',
-    response: { id: 1, name: 'John', email: 'john@example.com' }
+    response: (params) => ({
+      id: params.id,
+      name: params.id === '1' ? 'John' : 'Jane',
+      email: `user${params.id}@example.com`
+    })
   },
   {
     method: 'GET',
@@ -17,12 +21,20 @@ module.exports = [
   {
     method: 'GET',
     path: '/api/products/:id',
-    response: { id: 1, title: 'Laptop', price: 999 }
+    response: (params) => ({
+      id: params.id,
+      title: 'Product ' + params.id,
+      price: 999
+    })
   },
   {
     method: 'POST',
     path: '/api/users',
     status: 201,
-    response: { id: 3, name: 'New User', created: true }
+    response: (params, body) => ({
+      id: Date.now(),
+      ...body,
+      created: true
+    })
   }
 ];
