@@ -94,12 +94,24 @@ paths:
       process.exit(1);
     }
 
-    const overrides = parseArgs(args.slice(1));
-    const config = getConfig(overrides);
+    try {
+      const overrides = parseArgs(args.slice(1));
+      const config = getConfig(overrides);
 
-    log.info('Starting ShadowAPI...');
-    log.info(`Mode: ${config.mode}`);
-    log.info(`Port: ${config.port}`);
+      const modeBehavior = {
+        mock: 'always use mock engine',
+        proxy: 'always forward to backend',
+        hybrid: 'backend first, mock fallback'
+      };
+
+      log.info('Starting ShadowAPI...');
+      log.info(`Mode: ${config.mode}`);
+      log.info(`Behavior: ${modeBehavior[config.mode]}`);
+      log.info(`Port: ${config.port}`);
+    } catch (err) {
+      log.error(err.message);
+      process.exit(1);
+    }
 
     break;
 
