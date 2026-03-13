@@ -18,6 +18,10 @@ function registerRoutes(app, routes) {
         responseData = response;
       }
       
+      if (status === 204) {
+        return res.status(204).end();
+      }
+      
       res.status(status).json(responseData);
     });
     
