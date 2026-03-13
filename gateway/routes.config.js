@@ -36,5 +36,37 @@ module.exports = [
       ...body,
       created: true
     })
+  },
+  {
+    method: 'PUT',
+    path: '/api/users/:id',
+    status: 200,
+    response: (params, body) => ({
+      id: params.id,
+      ...body,
+      updated: true
+    })
+  },
+  {
+    method: 'DELETE',
+    path: '/api/users/:id',
+    status: 204,
+    response: () => null
+  },
+  {
+    method: 'PUT',
+    path: '/api/products/:id',
+    status: 200,
+    response: (params, body) => ({
+      id: params.id,
+      ...body,
+      updated: true
+    })
+  },
+  {
+    method: 'DELETE',
+    path: '/api/products/:id',
+    status: 204,
+    response: () => null
   }
 ];
