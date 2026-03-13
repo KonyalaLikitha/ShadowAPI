@@ -24,4 +24,30 @@ function add(resource, item) {
   return newItem;
 }
 
-module.exports = { get, add };
+function getById(resource, id) {
+  const items = state[resource] || [];
+  return items.find((item) => item.id === Number(id));
+}
+
+function update(resource, id, newData) {
+  const items = state[resource] || [];
+
+  const index = items.findIndex(item => item.id === Number(id));
+  if (index === -1) return null;
+
+  items[index] = { ...items[index], ...newData };
+
+  return items[index];
+}
+
+function remove(resource, id) {
+  const items = state[resource] || [];
+
+  const index = items.findIndex(item => item.id === Number(id));
+  if (index === -1) return false;
+
+  items.splice(index, 1);
+  return true;
+}
+
+module.exports = { get, add, getById, update, remove };

@@ -10,6 +10,11 @@
     },
     { "method": "GET", "path": "/users" },
     { "method": "POST", "path": "/users" },
-    { "method": "GET", "path": "/orders" }
+    { "method": "GET", "path": "/orders" },
+    { "method": "GET", "path": "/users" },
+    { "method": "POST", "path": "/users" },
+    { "method": "GET", "path": "/users/:id" },
+    { "method": "PUT", "path": "/users/:id" },
+    { "method": "DELETE", "path": "/users/:id" }
   ]
 }

@@ -29,7 +29,25 @@ function handleRequest(req) {
       };
     }
   }
+  if (method === "PUT" && userIdMatch) {
+  const id = userIdMatch[1];
+  const updated = store.update("users", id, body);
 
+  return {
+    type: "mock",
+    response: { success: true, data: updated }
+  };
+}
+
+if (method === "DELETE" && userIdMatch) {
+  const id = userIdMatch[1];
+  const removed = store.remove("users", id);
+
+  return {
+    type: "mock",
+    response: { success: removed }
+  };
+}
   return { type: "forward" };
 }
 
