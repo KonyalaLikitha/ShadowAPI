@@ -158,7 +158,7 @@ MIT License - see [LICENSE](LICENSE)
 
 ## Roadmap
 - [x] Project setup
-- [ ] Basic mock server
+- [x] Basic mock server
 - [ ] Proxy forwarding
 - [x] DevTools extension
 - [ ] Full documentation
