@@ -10,12 +10,9 @@ const corsMiddleware = (req, res, next) => {
   next();
 };
 
-const paramInjector = (req, res, next) => {
-  req.shadowapi = {
-    params: req.params,
-    query: req.query,
-    timestamp: Date.now()
-  };
+const modeTag = (req, res, next) => {
+  res.locals.source = process.env.SHADOW_MODE === 'real' ? 'real' : 'mock';
+  req.shadowapi = { params: req.params, query: req.query, timestamp: Date.now() };
   next();
 };
 
@@ -23,7 +20,7 @@ function setupMiddleware(app) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(corsMiddleware);
-  app.use(paramInjector);
+  app.use(modeTag);
   app.use(requestLogger);
   app.use(validateRequest);
 }
