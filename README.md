@@ -2,7 +2,7 @@
 
 **Remove backend dependency during development.**
 
-ShadowAPI is an open-source development gateway that generates realistic mock servers from API contracts and seamlessly switches to real backends as they become available.
+ShadowAPI is an open-source developer tool that helps frontend teams work without waiting for backend APIs. It generates mock APIs from API contracts and seamlessly switches to real backend services when they become available.
 
 ## Why ShadowAPI?
 
@@ -157,10 +157,8 @@ We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 MIT License - see [LICENSE](LICENSE)
 
 ## Roadmap
-
-## Roadmap
 - [x] Project setup
-- [ ] Basic mock server
+- [x] Basic mock server
 - [ ] Proxy forwarding
 - [x] DevTools extension
 - [ ] Full documentation
@@ -185,6 +183,26 @@ docs/devtools-guide.md
 ```
 
 This guide explains how to inspect API requests, view responses, and debug requests using the ShadowAPI Control Panel.
+## Project Roadmap
+
+ShadowAPI is currently under active development. The goal is to build a lightweight development gateway that allows frontend and backend teams to work in parallel.
+
+### Current Progress
+
+* DevTools extension for API request inspection
+* Mock / Real mode toggle
+* Request logging and search
+* Expandable response viewer
+* Example frontend demo application
+
+### Upcoming Features
+
+* Stateful mock API engine
+* Proxy gateway to real backend services
+* CLI commands for server control
+* Mock fallback for missing endpoints
+* Improved DevTools debugging interface
 
 
-**Built for developers who ship fast.**
+
+
