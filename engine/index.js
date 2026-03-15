@@ -5,7 +5,7 @@ const store = require("./stateStore");
 
 function handleRequest(req) {
   const { path, method, body } = req;
-
+  console.log(`[Engine] ${method} ${path} received`);
   const error = simulateError();
   if (error) {
     return {
@@ -19,7 +19,7 @@ function handleRequest(req) {
   if (method === "GET" && userIdMatch) {
     const id = userIdMatch[1];
     const user = store.getById("users", id);
-
+    console.log(`[Engine] Returning mock data for ${resource}`);
     if (!user) {
       return {
         type: "mock",
@@ -45,6 +45,7 @@ function handleRequest(req) {
   if (route) {
 
     if (method === "GET") {
+      console.log(`[Engine] Returning mock data for ${resource}`);
       const data = store.get(resource);
       return {
         type: "mock",
@@ -54,6 +55,7 @@ function handleRequest(req) {
 
     if (method === "POST") {
       const created = store.add(resource, body);
+      console.log(`[Engine] Creating new ${resource}`);
       return {
         type: "mock",
         response: { success: true, data: created }
@@ -81,6 +83,7 @@ function handleRequest(req) {
     };
   }
 
+  console.log("[Engine] No mock route found → forwarding to backend");
   return { type: "forward" };
 }
 

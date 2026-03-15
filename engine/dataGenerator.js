@@ -4,7 +4,6 @@ const store = require("./stateStore");
 function handleRequest(req) {
   const { path, method, body } = req;
 
-  // check for /users/:id
   const userIdMatch = path.match(/^\/users\/(\d+)$/);
 
   if (method === "GET" && userIdMatch) {
