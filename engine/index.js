@@ -36,9 +36,23 @@ function handleRequest(req) {
     };
   }
 
-  const route = schema.routes.find(
-    (r) => r.method === method && r.path === path
-  );
+  const route = schema.routes.find((r) => {
+    if (r.method !== method) return false;
+
+    if (r.path === path) return true;
+
+    // handle dynamic route /users/:id
+    if (r.path === "/users/:id" && path.match(/^\/users\/\d+$/)) {
+      return true;
+    }
+
+    return false;
+  });
+
+  if (!route) {
+    console.log(`[Engine] No schema route for ${method} ${path} → forward`);
+    return { type: "forward" };
+  }
 
   const resource = path.replace("/", "");
 
@@ -64,7 +78,7 @@ function handleRequest(req) {
   }
 
   if (method === "PUT" && userIdMatch) {
-    const id = userIdMatch[1];
+    const id = userIdMatch[1];structuredClone
     const updated = store.update("users", id, body);
 
     return {
