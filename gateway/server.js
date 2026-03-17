@@ -6,6 +6,7 @@ const registerRoutes = require('./router');
 const routes = require('./routes.config');
 const { errorHandler, notFoundHandler } = require('./errorHandler');
 const createProxyMiddleware = require('./proxy');
+const checkBackend = require('./backendChecker');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,11 +25,39 @@ const config = loadConfig();
 const mode = process.env.SHADOW_MODE || config.mode || 'mock';
 const backendUrl = process.env.BACKEND_URL || config.backend || null;
 
+// cached backend health — refreshed on each /gateway/status call
+let backendHealth = { reachable: null, latency: null, statusCode: null, checkedAt: null };
+
+async function probeBackend() {
+  if (!backendUrl) return;
+  const result = await checkBackend(backendUrl);
+  backendHealth = { ...result, checkedAt: new Date().toISOString() };
+  const tag = result.reachable
+    ? `\x1b[32mreachable\x1b[0m (${result.latency}ms)`
+    : `\x1b[31munreachable\x1b[0m (${result.error})`;
+  console.log(`\x1b[36m[gateway]\x1b[0m backend ${backendUrl} → ${tag}`);
+}
+
 setupMiddleware(app);
 
 // Health endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'ShadowAPI Gateway', mode, backend: backendUrl || 'none' });
+});
+
+// Gateway status — live backend probe
+app.get('/gateway/status', async (req, res) => {
+  if (backendUrl) {
+    const result = await checkBackend(backendUrl);
+    backendHealth = { ...result, checkedAt: new Date().toISOString() };
+  }
+  res.json({
+    mode,
+    backend: backendUrl || null,
+    backendHealth: backendUrl ? backendHealth : null,
+    mockRoutes: routes.length,
+    uptime: Math.floor(process.uptime()),
+  });
 });
 
 // Proxy layer — active in proxy or hybrid mode
@@ -37,12 +66,13 @@ if ((mode === 'proxy' || mode === 'hybrid') && backendUrl) {
   app.use(createProxyMiddleware(backendUrl));
 }
 
-// Mock routes — always registered; in proxy mode they act as fallback
+// Mock routes — always registered; in proxy/hybrid mode they act as fallback
 registerRoutes(app, routes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`\x1b[32m🚀 ShadowAPI Gateway\x1b[0m running on http://localhost:${PORT} \x1b[2m[${mode}]\x1b[0m`);
+  await probeBackend();
 });
