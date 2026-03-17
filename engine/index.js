@@ -18,7 +18,8 @@ function handleRequest(req) {
 
   if (method === "GET" && userIdMatch) {
     const id = userIdMatch[1];
-    const user = store.getById("users", id);
+    const resource = "users";
+    const user = store.getById(resource, id);
     console.log(`[Engine] Returning mock data for ${resource}`);
     if (!user) {
       return {
@@ -41,7 +42,6 @@ function handleRequest(req) {
 
     if (r.path === path) return true;
 
-    // handle dynamic route /users/:id
     if (r.path === "/users/:id" && path.match(/^\/users\/\d+$/)) {
       return true;
     }
@@ -50,7 +50,7 @@ function handleRequest(req) {
   });
 
   if (!route) {
-    console.log(`[Engine] No schema route for ${method} ${path} → forward`);
+    console.log(`[Engine] No matching route → forward to backend`);
     return { type: "forward" };
   }
 
@@ -78,7 +78,7 @@ function handleRequest(req) {
   }
 
   if (method === "PUT" && userIdMatch) {
-    const id = userIdMatch[1];structuredClone
+    const id = userIdMatch[1];
     const updated = store.update("users", id, body);
 
     return {
