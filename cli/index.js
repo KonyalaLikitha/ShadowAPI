@@ -11,6 +11,7 @@ Commands:
   shadowapi init    Initialize ShadowAPI project
   shadowapi start   Start ShadowAPI server
   shadowapi status  Show current ShadowAPI status
+  shadowapi connect <backend_url>  Connect backend URL
   shadowapi --help  Show help
 `);
 };
@@ -21,6 +22,7 @@ Commands:
   shadowapi init
   shadowapi start
   shadowapi status
+  shadowapi connect <backend_url>
   shadowapi --help
 `);
 };
@@ -28,7 +30,8 @@ Commands:
 const commands = {
   init: require('./commands/init'),
   start: require('./commands/start'),
-  status: require('./commands/status')
+  status: require('./commands/status'),
+  connect: require('./commands/connect')
 };
 
 if (args.includes('--help')) {

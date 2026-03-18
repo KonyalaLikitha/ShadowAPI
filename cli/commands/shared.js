@@ -110,6 +110,7 @@ Commands:
   shadowapi init
   shadowapi start
   shadowapi status
+  shadowapi connect <backend_url>
   shadowapi --help
 `);
 };
