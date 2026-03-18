@@ -25,7 +25,6 @@ const config = loadConfig();
 const mode = process.env.SHADOW_MODE || config.mode || 'mock';
 const backendUrl = process.env.BACKEND_URL || config.backend || null;
 
-// cached backend health — refreshed on each /gateway/status call
 let backendHealth = { reachable: null, latency: null, statusCode: null, checkedAt: null };
 
 async function probeBackend() {
@@ -40,12 +39,10 @@ async function probeBackend() {
 
 setupMiddleware(app);
 
-// Health endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'ShadowAPI Gateway', mode, backend: backendUrl || 'none' });
 });
 
-// Gateway status — live backend probe
 app.get('/gateway/status', async (req, res) => {
   if (backendUrl) {
     const result = await checkBackend(backendUrl);
@@ -60,13 +57,12 @@ app.get('/gateway/status', async (req, res) => {
   });
 });
 
-// Proxy layer — active in proxy or hybrid mode
+// Proxy layer — pass mode + routes so proxy can tag headers and validate responses
 if ((mode === 'proxy' || mode === 'hybrid') && backendUrl) {
   console.log(`\x1b[36m[gateway]\x1b[0m Proxy enabled → ${backendUrl}`);
-  app.use(createProxyMiddleware(backendUrl));
+  app.use(createProxyMiddleware(backendUrl, mode, routes));
 }
 
-// Mock routes — always registered; in proxy/hybrid mode they act as fallback
 registerRoutes(app, routes);
 
 app.use(notFoundHandler);
