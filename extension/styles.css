@@ -10,3 +10,59 @@ body {
 h1 {
   color: #333;
 }
+.log-header {
+display: flex;
+gap: 6px;
+align-items: center;
+flex-wrap: wrap;
+font-size: 12px;
+}
+
+.method {
+font-weight: bold;
+padding: 2px 6px;
+border-radius: 4px;
+background: #2196f3;
+color: white;
+}
+
+.status {
+padding: 2px 6px;
+border-radius: 4px;
+background: #4caf50;
+color: white;
+}
+
+.mode-label {
+padding: 2px 6px;
+border-radius: 4px;
+font-size: 10px;
+color: white;
+}
+
+.mode-label.real {
+background-color: #4caf50;
+}
+
+.mode-label.mock {
+background-color: #ff9800;
+}
+
+.log-url {
+word-break: break-all;
+}
+.method-get {
+background-color: #4caf50;
+}
+
+.method-post {
+background-color: #2196f3;
+}
+
+.method-put {
+background-color: #ff9800;
+}
+
+.method-delete {
+background-color: #f44336;
+}

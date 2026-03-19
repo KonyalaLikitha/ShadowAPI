@@ -29,44 +29,62 @@ function updateRequestCount() {
 
 function createRequestEntry(request) {
 
-  const entry = document.createElement("div");
-  entry.className = "log-entry";
+const entry = document.createElement("div");
+entry.className = "log-entry";
 
-  const header = document.createElement("div");
-  header.className = "log-header";
+const header = document.createElement("div");
+header.className = "log-header";
 
-  const method = document.createElement("span");
-  method.className = "method";
+const method = document.createElement("span");
+const methodType = request.request.method;
 
-  method.textContent = request.request.method;
+method.className = `method method-${methodType.toLowerCase()}`;
+method.textContent = methodType;
 
-  const status = document.createElement("span");
-  status.className = "status";
+method.textContent = request.request.method;
 
-  status.textContent = request.response.status;
+const status = document.createElement("span");
+status.className = "status";
+status.textContent = request.response.status;
 
-  const url = document.createElement("span");
-  url.className = "log-url";
+const url = document.createElement("span");
+url.className = "log-url";
+url.textContent = request.request.url;
 
-  url.textContent = request.request.url;
 
-  header.appendChild(method);
-  header.appendChild(status);
-  header.appendChild(url);
+const mode = document.createElement("span");
+mode.className = `mode-label ${currentMode.toLowerCase()}`;
+mode.textContent = currentMode;
 
-  const details = document.createElement("div");
-  details.className = "log-details";
+header.appendChild(method);
 
-  entry.appendChild(header);
-  entry.appendChild(details);
+header.appendChild(document.createTextNode(" "));
 
-  header.addEventListener(
-    "click",
-    () => toggleDetails(entry, request)
-  );
+header.appendChild(status);
 
-  return entry;
+header.appendChild(document.createTextNode(" "));
+
+header.appendChild(mode);
+
+header.appendChild(document.createTextNode(" "));
+
+header.appendChild(url);
+
+
+const details = document.createElement("div");
+details.className = "log-details";
+
+entry.appendChild(header);
+entry.appendChild(details);
+
+header.addEventListener(
+"click",
+() => toggleDetails(entry, request)
+);
+
+return entry;
 }
+
 
 function toggleDetails(entry, request) {
 
