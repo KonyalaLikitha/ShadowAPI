@@ -1,10 +1,13 @@
 const { sendStatus } = require('./statusCodes');
 
-function registerRoutes(app, routes) {
+function registerRoutes(app, routes, mode) {
   routes.forEach(route => {
     const { method, path, response, status = 200 } = route;
 
     app[method.toLowerCase()](path, (req, res) => {
+      res.setHeader('x-shadowapi-source', 'mock');
+      res.setHeader('x-shadowapi-mode', mode || process.env.SHADOW_MODE || 'mock');
+
       if (status === 204) return res.status(204).end();
 
       const data =

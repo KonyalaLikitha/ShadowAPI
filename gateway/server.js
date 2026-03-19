@@ -63,7 +63,7 @@ if ((mode === 'proxy' || mode === 'hybrid') && backendUrl) {
   app.use(createProxyMiddleware(backendUrl, mode, routes));
 }
 
-registerRoutes(app, routes);
+registerRoutes(app, routes, mode);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
