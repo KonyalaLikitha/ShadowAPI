@@ -9,45 +9,38 @@
 
 <body>
 
-  <div class="header">
-    <h2>ShadowAPI Control Panel</h2>
+  <div class="container">
 
-<div class="header-controls">
-  <div class="mode-badge" id="modeBadge"></div>
+```
+<!-- HEADER -->
+<div class="header">
+  <h2>ShadowAPI Control Panel</h2>
 
-  <button id="toggle" class="btn btn-primary">
-    Switch Mode
-  </button>
+  <div class="controls">
+    <span id="modeBadge"></span>
 
-  <button id="clear" class="btn btn-secondary">
-    Clear Logs
-  </button>
-
-  <button id="collapse" class="btn btn-secondary">
-    Collapse Logs
-  </button>
+    <button id="toggle">Switch Mode</button>
+    <button id="clear">Clear Logs</button>
+    <button id="collapse">Collapse Logs</button>
+  </div>
 </div>
 
-  </div>
+<!-- TOP BAR -->
+<div class="top-bar">
+  <span>Total Requests: <b id="requestCount">0</b></span>
 
-  <div class="stats">
-    <span>Total Requests: <span id="requestCount">0</span></span>
-  </div>
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search requests..."
+  />
+</div>
 
-  <div class="summary">
-    <h3>Endpoint Usage</h3>
-    <ul id="endpointSummary"></ul>
-  </div>
+<!-- LOGS -->
+<div id="logs"></div>
+```
 
-  <div class="search">
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Search requests..."
-    />
   </div>
-
-  <div id="logs"></div>
 
   <script src="panel.js"></script>
 

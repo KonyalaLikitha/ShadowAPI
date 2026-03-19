@@ -54,7 +54,7 @@ url.textContent = request.request.url;
 
 const mode = document.createElement("span");
 mode.className = `mode-label ${currentMode.toLowerCase()}`;
-mode.textContent = currentMode;
+mode.textContent = currentMode === "MOCK" ? "MOCK API" : "REAL API";
 
 header.appendChild(method);
 
