@@ -1,46 +1,46 @@
 const schema = require("./schema.json");
-const store = require("./stateStore");
 
-function handleRequest(req) {
-  const { path, method, body } = req;
+function generateObjects(resource, count = 5) {
+  const fields = schema.fields?.[resource];
+  if (!fields) return [];
 
-  const userIdMatch = path.match(/^\/users\/(\d+)$/);
-
-  if (method === "GET" && userIdMatch) {
-    const id = userIdMatch[1];
-    const user = store.getById("users", id);
-
-    return {
-      type: "mock",
-      response: { success: true, data: user }
-    };
+  const objects = [];
+  for (let i = 1; i <= count; i++) {
+    const obj = { id: i };
+    
+    Object.entries(fields).forEach(([field, type]) => {
+      obj[field] = generateField(type);
+    });
+    
+    objects.push(obj);
   }
-
-  const route = schema.routes.find(
-    (r) => r.method === method && r.path === path
-  );
-
-  if (route) {
-    const resource = path.replace("/", "");
-
-    if (method === "GET") {
-      const data = store.get(resource);
-      return {
-        type: "mock",
-        response: { success: true, data }
-      };
-    }
-
-    if (method === "POST") {
-      const created = store.add(resource, body);
-      return {
-        type: "mock",
-        response: { success: true, data: created }
-      };
-    }
-  }
-
-  return { type: "forward" };
+  return objects;
 }
 
-module.exports = { handleRequest };
+function generateField(type) {
+  switch (type) {
+    case 'number': return Math.floor(Math.random() * 1000);
+    case 'string': return `mock_${Math.random().toString(36).substr(2, 6)}`;
+    case 'email': return `user${Math.floor(Math.random()*1000)}@example.com`;
+    case 'boolean': return Math.random() > 0.5;
+    default: return `mock_${type}`;
+  }
+}
+
+function generateSingle(resource, overrides = {}) {
+  const fields = schema.fields?.[resource];
+  if (!fields) return overrides;
+
+  const obj = { ...overrides };
+  
+  Object.entries(fields).forEach(([field, type]) => {
+    if (!(field in obj)) {
+      obj[field] = generateField(type);
+    }
+  });
+  
+  return obj;
+}
+
+module.exports = { generateObjects, generateField, generateSingle };
+

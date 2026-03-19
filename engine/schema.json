@@ -5,16 +5,39 @@
       "path": "/users"
     },
     {
+      "method": "POST", 
+      "path": "/users"
+    },
+    {
       "method": "GET",
       "path": "/orders"
     },
-    { "method": "GET", "path": "/users" },
-    { "method": "POST", "path": "/users" },
-    { "method": "GET", "path": "/orders" },
-    { "method": "GET", "path": "/users" },
-    { "method": "POST", "path": "/users" },
-    { "method": "GET", "path": "/users/:id" },
-    { "method": "PUT", "path": "/users/:id" },
-    { "method": "DELETE", "path": "/users/:id" }
-  ]
+    {
+      "method": "GET",
+      "path": "/users/:id"
+    },
+    {
+      "method": "PUT",
+      "path": "/users/:id"
+    },
+    {
+      "method": "DELETE",
+      "path": "/users/:id"
+    }
+  ],
+  "fields": {
+    "users": {
+      "id": "number",
+      "name": "string",
+      "email": "string",
+      "age": "number",
+      "active": "boolean"
+    },
+    "orders": {
+      "id": "number",
+      "userId": "number",
+      "amount": "number",
+      "status": "string"
+    }
+  }
 }

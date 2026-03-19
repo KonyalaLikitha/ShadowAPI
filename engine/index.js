@@ -1,11 +1,13 @@
 const schema = require("./schema.json");
-const { simulateError } = require("./errorSimulator");
-const { generateObjects } = require("./dataGenerator");
+const { simulateError } = require("./errorSimulation.js");
+const { generateObjects, generateSingle } = require("./dataGenerator");
+const { validateMock } = require("./responseValidator");
 const store = require("./stateStore");
 
-function handleRequest(req) {
+function handleRequest(req, realSample = null) {
   const { path, method, body } = req;
   console.log(`[Engine] ${method} ${path} received`);
+  
   const error = simulateError();
   if (error) {
     return {
@@ -15,37 +17,14 @@ function handleRequest(req) {
   }
 
   const userIdMatch = path.match(/^\/users\/(\d+)$/);
-
-  if (method === "GET" && userIdMatch) {
-    const id = userIdMatch[1];
-    const resource = "users";
-    const user = store.getById(resource, id);
-    console.log(`[Engine] Returning mock data for ${resource}`);
-    if (!user) {
-      return {
-        type: "mock",
-        response: {
-          success: false,
-          error: "User not found"
-        }
-      };
-    }
-
-    return {
-      type: "mock",
-      response: { success: true, data: user }
-    };
-  }
+  const resource = path.split('/')[1] || 'users';
 
   const route = schema.routes.find((r) => {
     if (r.method !== method) return false;
-
     if (r.path === path) return true;
-
-    if (r.path === "/users/:id" && path.match(/^\/users\/\d+$/)) {
+    if (r.path === `/${resource}/:id` && path.match(new RegExp(`^/${resource}/\\d+$`))) {
       return true;
     }
-
     return false;
   });
 
@@ -54,51 +33,55 @@ function handleRequest(req) {
     return { type: "forward" };
   }
 
-  const resource = path.replace("/", "");
+  let mockResponse;
 
-  if (route) {
-
-    if (method === "GET") {
-      console.log(`[Engine] Returning mock data for ${resource}`);
-      const data = store.get(resource);
-      return {
-        type: "mock",
-        response: { success: true, data }
-      };
+  if (method === "GET" && !userIdMatch) {
+    console.log(`[Engine] Returning mock ${resource} collection`);
+    let data = store.get(resource);
+    
+    if (!data || data.length === 0) {
+      data = generateObjects(resource, 10);
+      store.get = () => data;
     }
+    
+    mockResponse = { success: true, data };
 
-    if (method === "POST") {
-      const created = store.add(resource, body);
-      console.log(`[Engine] Creating new ${resource}`);
-      return {
-        type: "mock",
-        response: { success: true, data: created }
-      };
+  } else if (method === "GET" && userIdMatch) {
+    const id = userIdMatch[1];
+    let user = store.getById(resource, id);
+    
+    if (!user) {
+      console.log(`[Engine] User ${id} not found → generating`);
+      user = generateSingle(resource, { id: Number(id) });
     }
-  }
+    
+    mockResponse = { success: true, data: user };
 
-  if (method === "PUT" && userIdMatch) {
+  } else if (method === "POST") {
+    const created = generateSingle(resource, body) || store.add(resource, body);
+    console.log(`[Engine] Created ${resource}:`, created.id);
+    mockResponse = { success: true, data: created };
+
+  } else if (method === "PUT" && userIdMatch) {
     const id = userIdMatch[1];
-    const updated = store.update("users", id, body);
+    const updated = store.update(resource, id, body) || generateSingle(resource, { id: Number(id), ...body });
+    mockResponse = { success: true, data: updated };
 
-    return {
-      type: "mock",
-      response: { success: true, data: updated }
-    };
-  }
-
-  if (method === "DELETE" && userIdMatch) {
+  } else if (method === "DELETE" && userIdMatch) {
     const id = userIdMatch[1];
-    const removed = store.remove("users", id);
-
-    return {
-      type: "mock",
-      response: { success: removed }
-    };
+    const removed = store.remove(resource, id);
+    mockResponse = { success: removed !== false, data: { message: 'Deleted' } };
   }
 
-  console.log("[Engine] No mock route found → forwarding to backend");
-  return { type: "forward" };
+  if (realSample) {
+    mockResponse = validateMock(realSample, mockResponse);
+  }
+
+  return {
+    type: "mock",
+    response: mockResponse
+  };
 }
 
 module.exports = { handleRequest };
+
