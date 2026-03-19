@@ -25,6 +25,13 @@ function attemptForward(target, req, res, mode, routes, retries, fallback) {
   const options = buildOptions(target, req, isHttps);
 
   const proxyReq = transport.request(options, (proxyRes) => {
+    // fallback to mock if backend says endpoint doesn't exist
+    if (proxyRes.statusCode === 404) {
+      proxyRes.resume();
+      console.warn(`\x1b[33m[proxy]\x1b[0m backend 404 on ${target.pathname} — falling back to mock`);
+      return fallback();
+    }
+
     res.locals.source = 'real';
     res.setHeader('x-shadowapi-source', 'real');
     res.setHeader('x-shadowapi-mode', mode);
