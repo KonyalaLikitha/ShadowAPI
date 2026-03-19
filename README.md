@@ -28,6 +28,18 @@ shadowapi start --contract api-spec.yaml
 # Connect real backend (when ready)
 shadowapi connect --backend http://localhost:8080
 ```
+## Demo
+
+Below is a quick demonstration of the ShadowAPI DevTools extension in action.
+
+![ShadowAPI Demo](docs/images/demo.gif)
+
+This demo shows:
+
+* Opening the DevTools panel
+* Triggering API requests
+* Inspecting responses in real time
+
 
 ## Features
 
