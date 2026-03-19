@@ -6,6 +6,35 @@ const https = require('https');
 const configExists = () =>
   fs.existsSync(path.join(process.cwd(), 'shadowapi.config.json'));
 
+const saveConfig = (updatedConfig) => {
+  const configPath = path.join(process.cwd(), 'shadowapi.config.json');
+
+  if (!fs.existsSync(configPath)) {
+    throw new Error('No config found. Run: shadowapi init');
+  }
+
+  let currentConfig;
+
+  try {
+    const content = fs.readFileSync(configPath, 'utf8');
+    currentConfig = JSON.parse(content);
+  } catch (err) {
+    throw new Error(`Invalid shadowapi.config.json: ${err.message}`);
+  }
+
+  const mergedConfig = {
+    ...currentConfig,
+    ...updatedConfig
+  };
+
+  fs.writeFileSync(
+    configPath,
+    JSON.stringify(mergedConfig, null, 2) + '\n'
+  );
+
+  return mergedConfig;
+};
+
 const readConfigForStatus = () => {
   const configPath = path.join(process.cwd(), 'shadowapi.config.json');
 
@@ -117,6 +146,7 @@ Commands:
 
 module.exports = {
   configExists,
+  saveConfig,
   readConfigForStatus,
   parseArgs,
   checkBackendConnection,

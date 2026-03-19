@@ -1,7 +1,5 @@
-const fs = require('fs');
-const path = require('path');
 const log = require('../logger');
-const { configExists } = require('./shared');
+const { configExists, saveConfig } = require('./shared');
 
 module.exports = function (args) {
   if (!configExists()) {
@@ -30,18 +28,11 @@ module.exports = function (args) {
     process.exit(1);
   }
 
-  const configPath = path.join(process.cwd(), 'shadowapi.config.json');
-
   try {
-    const currentContent = fs.readFileSync(configPath, 'utf8');
-    const config = JSON.parse(currentContent);
-
-    config.backend = backendUrl;
-
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    saveConfig({ backend: backendUrl });
 
     log.success('Backend connected');
-    log.info(backendUrl);
+    log.info(`Backend: ${backendUrl}`);
   } catch (err) {
     log.error('Invalid shadowapi.config.json format');
     process.exit(1);
