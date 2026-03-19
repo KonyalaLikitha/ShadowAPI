@@ -10,6 +10,7 @@ function errorHandler(err, req, res, _next) {
 function notFoundHandler(req, res) {
   const code = 404;
   const { message } = resolveStatus(code);
+  res.setHeader('x-shadowapi-source', 'mock');
   res.status(code).json({
     status: code,
     message,
