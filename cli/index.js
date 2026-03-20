@@ -12,6 +12,7 @@ Commands:
   shadowapi start   Start ShadowAPI server
   shadowapi status  Show current ShadowAPI status
   shadowapi connect <backend_url>  Connect backend URL
+  shadowapi reconnect  Check configured backend connection
   shadowapi --help  Show help
 `);
 };
@@ -23,6 +24,7 @@ Commands:
   shadowapi start
   shadowapi status
   shadowapi connect <backend_url>
+  shadowapi reconnect
   shadowapi --help
 `);
 };
@@ -31,7 +33,8 @@ const commands = {
   init: require('./commands/init'),
   start: require('./commands/start'),
   status: require('./commands/status'),
-  connect: require('./commands/connect')
+  connect: require('./commands/connect'),
+  reconnect: require('./commands/reconnect')
 };
 
 if (args.includes('--help')) {

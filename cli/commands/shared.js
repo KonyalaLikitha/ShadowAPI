@@ -140,6 +140,7 @@ Commands:
   shadowapi start
   shadowapi status
   shadowapi connect <backend_url>
+  shadowapi reconnect
   shadowapi --help
 `);
 };
