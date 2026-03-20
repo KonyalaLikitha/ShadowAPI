@@ -41,7 +41,6 @@ function handleRequest(req, realSample = null) {
     
     if (!data || data.length === 0) {
       data = generateObjects(resource, 10);
-      store.get = () => data;
     }
     
     mockResponse = { success: true, data };
@@ -58,7 +57,7 @@ function handleRequest(req, realSample = null) {
     mockResponse = { success: true, data: user };
 
   } else if (method === "POST") {
-    const created = generateSingle(resource, body) || store.add(resource, body);
+    const created = store.add(resource, generateSingle(resource, body));
     console.log(`[Engine] Created ${resource}:`, created.id);
     mockResponse = { success: true, data: created };
 
