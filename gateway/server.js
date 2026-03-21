@@ -6,6 +6,7 @@ const registerRoutes = require('./router');
 const routes = require('./routes.config');
 const { errorHandler, notFoundHandler } = require('./errorHandler');
 const createProxyMiddleware = require('./proxy');
+const { getProxyStats } = require('./proxy');
 const checkBackend = require('./backendChecker');
 
 const app = express();
@@ -40,7 +41,13 @@ async function probeBackend() {
 setupMiddleware(app);
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'ShadowAPI Gateway', mode, backend: backendUrl || 'none' });
+  res.json({
+    status: 'ok',
+    service: 'ShadowAPI Gateway',
+    mode,
+    backend: backendUrl || 'none',
+    stats: getProxyStats()
+  });
 });
 
 app.get('/gateway/status', async (req, res) => {
@@ -57,7 +64,6 @@ app.get('/gateway/status', async (req, res) => {
   });
 });
 
-// Proxy layer — pass mode + routes so proxy can tag headers and validate responses
 if ((mode === 'proxy' || mode === 'hybrid') && backendUrl) {
   console.log(`\x1b[36m[gateway]\x1b[0m Proxy enabled → ${backendUrl}`);
   app.use(createProxyMiddleware(backendUrl, mode, routes));

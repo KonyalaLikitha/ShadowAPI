@@ -6,6 +6,8 @@ const validateResponse = require('./responseValidator');
 const PROXY_TIMEOUT_MS = 10000;
 const MAX_RETRIES = 1;
 
+const stats = { proxied: 0, fallback: 0 };
+
 function buildOptions(target, req, isHttps) {
   const headers = { ...req.headers, host: target.hostname, 'x-forwarded-by': 'shadowapi' };
   delete headers['content-length'];
@@ -25,18 +27,18 @@ function attemptForward(target, req, res, mode, routes, retries, fallback) {
   const options = buildOptions(target, req, isHttps);
 
   const proxyReq = transport.request(options, (proxyRes) => {
-    // fallback to mock if backend says endpoint doesn't exist
     if (proxyRes.statusCode === 404) {
       proxyRes.resume();
+      stats.fallback++;
       console.warn(`\x1b[33m[proxy]\x1b[0m backend 404 on ${target.pathname} — falling back to mock`);
       return fallback();
     }
 
+    stats.proxied++;
     res.locals.source = 'real';
     res.setHeader('x-shadowapi-source', 'real');
     res.setHeader('x-shadowapi-mode', mode);
 
-    // collect body for validation on GET requests
     if (req.method === 'GET') {
       const chunks = [];
       proxyRes.on('data', chunk => chunks.push(chunk));
@@ -62,6 +64,7 @@ function attemptForward(target, req, res, mode, routes, retries, fallback) {
       console.warn(`\x1b[33m[proxy]\x1b[0m timeout — retrying (${retries} left)`);
       attemptForward(target, req, res, mode, routes, retries - 1, fallback);
     } else {
+      stats.fallback++;
       console.warn('\x1b[33m[proxy]\x1b[0m backend timed out, falling back to mock');
       fallback();
     }
@@ -72,6 +75,8 @@ function attemptForward(target, req, res, mode, routes, retries, fallback) {
       console.warn(`\x1b[33m[proxy]\x1b[0m error (${err.message}) — retrying (${retries} left)`);
       attemptForward(target, req, res, mode, routes, retries - 1, fallback);
     } else {
+      stats.fallback++;
+      res.locals.source = 'mock';
       console.warn(`\x1b[33m[proxy]\x1b[0m backend unreachable (${err.message}), falling back to mock`);
       fallback();
     }
@@ -98,4 +103,9 @@ function createProxyMiddleware(backendUrl, mode, routes) {
   return (req, res, next) => forwardRequest(backendUrl, req, res, next, mode, routes);
 }
 
+function getProxyStats() {
+  return { ...stats };
+}
+
 module.exports = createProxyMiddleware;
+module.exports.getProxyStats = getProxyStats;
