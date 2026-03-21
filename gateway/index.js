@@ -1,5 +1,5 @@
 module.exports = {
-  createServer: () => require('./server'),
+  startServer: require('./server').startServer,
   logger: require('./logger'),
   statusCodes: require('./statusCodes'),
   registerRoutes: require('./router'),

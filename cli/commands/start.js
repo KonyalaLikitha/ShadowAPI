@@ -1,4 +1,5 @@
 const { getConfig } = require('../../config/config');
+const { startServer } = require('../../gateway');
 const log = require('../logger');
 const { configExists, parseArgs } = require('./shared');
 
@@ -12,18 +13,14 @@ module.exports = function (args) {
     const overrides = parseArgs(args, log);
     const config = getConfig(overrides);
 
-    const modeBehavior = {
-      mock: 'always use mock engine',
-      proxy: 'always forward to backend',
-      hybrid: 'backend first, mock fallback'
-    };
-
     log.info('Starting ShadowAPI...');
     log.success('Configuration loaded');
-
     log.info(`Mode: ${config.mode}`);
-    log.info(`Behavior: ${modeBehavior[config.mode]}`);
     log.info(`Port: ${config.port}`);
+    log.info(`Backend: ${config.backend || 'not configured'}`);
+
+    // Delegate server bootstrapping to the gateway module.
+    startServer(config);
   } catch (err) {
     log.error(err.message);
     process.exit(1);
