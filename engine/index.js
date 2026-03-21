@@ -8,10 +8,12 @@ function handleRequest(req, realSample = null) {
   const { path, method, body } = req;
   console.log(`[Engine] ${method} ${path} received`);
   
-  const error = simulateError();
+  const error = simulateError(method);
   if (error) {
+    console.log(`[Engine] Simulated ${error.status}: ${error.response.error}`);
     return {
       type: "mock",
+      status: error.status,
       response: error.response
     };
   }
@@ -30,7 +32,7 @@ function handleRequest(req, realSample = null) {
 
   if (!route) {
     console.log(`[Engine] No matching route → forward to backend`);
-    return { type: "forward" };
+    return { type: "forward" , status: null};
   }
 
   let mockResponse;
@@ -44,8 +46,8 @@ function handleRequest(req, realSample = null) {
     }
     
     mockResponse = { success: true, data };
-
-  } else if (method === "GET" && userIdMatch) {
+  } 
+  else if (method === "GET" && userIdMatch) {
     const id = userIdMatch[1];
     let user = store.getById(resource, id);
     
@@ -55,18 +57,19 @@ function handleRequest(req, realSample = null) {
     }
     
     mockResponse = { success: true, data: user };
-
-  } else if (method === "POST") {
+  } 
+  else if (method === "POST") {
     const created = store.add(resource, generateSingle(resource, body));
     console.log(`[Engine] Created ${resource}:`, created.id);
     mockResponse = { success: true, data: created };
 
-  } else if (method === "PUT" && userIdMatch) {
+  } 
+  else if (method === "PUT" && userIdMatch) {
     const id = userIdMatch[1];
     const updated = store.update(resource, id, body) || generateSingle(resource, { id: Number(id), ...body });
     mockResponse = { success: true, data: updated };
-
-  } else if (method === "DELETE" && userIdMatch) {
+  } 
+  else if (method === "DELETE" && userIdMatch) {
     const id = userIdMatch[1];
     const removed = store.remove(resource, id);
     mockResponse = { success: removed !== false, data: { message: 'Deleted' } };
@@ -78,6 +81,7 @@ function handleRequest(req, realSample = null) {
 
   return {
     type: "mock",
+    status: 200,
     response: mockResponse
   };
 }
