@@ -9,7 +9,7 @@ const createProxyMiddleware = require('./proxy');
 const { getProxyStats } = require('./proxy');
 const checkBackend = require('./backendChecker');
 
-function startServer(config) {
+function startServer(config, onStarted) {
 
   const app = express();
 
@@ -68,6 +68,9 @@ function startServer(config) {
   app.listen(PORT, async () => {
     console.log(`\x1b[32m🚀 ShadowAPI Gateway\x1b[0m running on http://localhost:${PORT} \x1b[2m[${mode}]\x1b[0m`);
     await probeBackend();
+    if (typeof onStarted === 'function') {
+      onStarted({ port: PORT, mode, backend: backendUrl });
+    }
   });
 }
 
