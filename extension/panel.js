@@ -1,5 +1,6 @@
 let currentMode = "REAL";
 let requestCount = 0;
+const endpointMap = {};
 
 const modeStatusEl = document.getElementById("modeBadge");
 const toggleBtn = document.getElementById("toggle");
@@ -141,15 +142,50 @@ function toggleDetails(entry, request) {
 
 function addRequestLog(request) {
 
-  const entry = createRequestEntry(request);
+const url = request.request.url;
 
-  logsEl.appendChild(entry);
-
-  requestCount++;
-
-  updateRequestCount();
+if (!endpointMap[url]) {
+endpointMap[url] = [];
 }
 
+endpointMap[url].push(request);
+
+renderLogs();   // only this is needed
+
+requestCount++;
+updateRequestCount();
+}
+
+
+function renderLogs() {
+
+logsEl.innerHTML = "";
+
+Object.keys(endpointMap).forEach((url) => {
+
+```
+const group = document.createElement("div");
+group.className = "endpoint-group";
+
+const title = document.createElement("div");
+title.className = "endpoint-title";
+title.textContent = url + " (" + endpointMap[url].length + ")";
+
+group.appendChild(title);
+
+endpointMap[url].forEach((req) => {
+  const entry = createRequestEntry(req);
+  group.appendChild(entry);
+});
+
+logsEl.appendChild(group);
+```
+
+});
+
+}
+
+ 
 function clearLogs() {
 
   logsEl.innerHTML = "";

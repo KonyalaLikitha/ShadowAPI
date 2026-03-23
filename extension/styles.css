@@ -39,11 +39,26 @@ gap: 6px;
 }
 
 .log-entry {
-background: white;
 padding: 6px;
-border-radius: 6px;
-border: 1px solid #ddd;
+border-bottom: 1px solid #eee;
+transition: background 0.2s;
 }
+
+.log-entry:hover {
+background: #f9f9f9;
+}
+
+.log-details {
+background: #fafafa;
+padding: 6px;
+border-top: 1px solid #ddd;
+}
+
+pre {
+font-size: 11px;
+overflow-x: auto;
+}
+
 
 .log-header {
 display: flex;
@@ -95,4 +110,16 @@ margin-top: 5px;
 
 .log-details.expanded {
 display: block;
+}
+.endpoint-group {
+border: 1px solid #ddd;
+margin-bottom: 10px;
+border-radius: 6px;
+}
+
+.endpoint-title {
+background: #f5f5f5;
+padding: 6px;
+font-weight: bold;
+font-size: 12px;
 }
