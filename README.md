@@ -35,19 +35,72 @@ Below is a demonstration of the ShadowAPI DevTools extension.
 
 ---
 
-## Quick Start
-
-```bash
-npm install -g shadowapi
-
-shadowapi init
-
-shadowapi start --contract api-spec.yaml
-
-shadowapi connect --backend http://localhost:8080
-```
+##  Quick Start
+Get ShadowAPI running in under 2 minutes.
 
 ---
+
+## 1. Install
+    git clone https://github.com/KonyalaLikitha/ShadowAPI.git
+    cd ShadowAPI
+    npm install
+    npm link
+
+## 2. Initialize Project
+    shadowapi init
+
+Creates:
+- shadowapi.config.json
+- openapi.yaml
+
+## 3. Start ShadowAPI
+    shadowapi start --mode hybrid
+
+Modes:
+- mock → always use mock API  
+- proxy → always use real backend  
+- hybrid → backend first, fallback to mock  
+
+## 4. (Optional) Connect Backend
+    shadowapi connect http://localhost:5050
+
+## 5. Test API
+Open in browser:
+    http://localhost:3000/api/hello
+
+## 6. See the Magic
+
+ - Backend OFF
+    shadowapi start --mode hybrid
+      → Response comes from Mock Engine
+
+ - Backend ON
+    node -e "require('http').createServer((req,res)=>res.end('real backend')).listen(5050)"
+    Refresh:
+      → Response comes from Real Backend
+
+## 7. Check System Status
+    shadowapi status
+
+## 8. Check Backend Health
+    shadowapi reconnect
+
+## Example CLI Output
+    ShadowAPI: Starting ShadowAPI...
+    ✓ ShadowAPI: Configuration loaded
+    ShadowAPI: Mode: hybrid
+    ShadowAPI: Port: 3000
+    ShadowAPI: Backend: http://localhost:5050
+
+    🚀 ShadowAPI Gateway running on http://localhost:3000 [hybrid]
+
+## Expected Output
+
+| Scenario     | Result Source |
+|--------------|--------------|
+| Backend OFF  | Mock API     |
+| Backend ON   | Real Backend |
+| Hybrid Mode  | Auto Switch  |
 
 ## Example Demo
 
