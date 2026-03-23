@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node gateway/server.js",
-    "test": "jest --testPathPattern=gateway/tests --forceExit"
+    "test": "jest --testPathPattern=gateway/tests --forceExit",
+    "test:engine": "jest --testPathPattern=engine/tests --forceExit"
   },
   "keywords": [
     "mock",
