@@ -6,6 +6,22 @@ const https = require('https');
 const configExists = () =>
   fs.existsSync(path.join(process.cwd(), 'shadowapi.config.json'));
 
+const validateBackendUrl = (backendUrl) => {
+  let parsedUrl;
+
+  try {
+    parsedUrl = new URL(backendUrl);
+  } catch (err) {
+    throw new Error('Invalid backend URL. Use a full http:// or https:// URL.');
+  }
+
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    throw new Error('Invalid backend URL. Use a full http:// or https:// URL.');
+  }
+
+  return parsedUrl;
+};
+
 const saveConfig = (updatedConfig) => {
   const configPath = path.join(process.cwd(), 'shadowapi.config.json');
 
@@ -84,14 +100,14 @@ const parseArgs = (args, log) => {
 };
 
 const checkBackendConnection = (backendUrl, callback) => {
-  let parsedUrl;
-
   try {
-    parsedUrl = new URL(backendUrl);
+    validateBackendUrl(backendUrl);
   } catch (err) {
-    callback('invalid URL');
+    callback('invalid backend URL');
     return;
   }
+
+  const parsedUrl = new URL(backendUrl);
 
   const client = parsedUrl.protocol === 'https:' ? https : http;
   const requestPath = `${parsedUrl.pathname || '/'}${parsedUrl.search || ''}`;
@@ -147,6 +163,7 @@ Commands:
 
 module.exports = {
   configExists,
+  validateBackendUrl,
   saveConfig,
   readConfigForStatus,
   parseArgs,

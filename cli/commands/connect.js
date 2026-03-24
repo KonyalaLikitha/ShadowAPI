@@ -1,5 +1,5 @@
 const log = require('../logger');
-const { configExists, saveConfig } = require('./shared');
+const { configExists, saveConfig, validateBackendUrl } = require('./shared');
 
 module.exports = function (args) {
   if (!configExists()) {
@@ -14,17 +14,10 @@ module.exports = function (args) {
     process.exit(1);
   }
 
-  let parsedUrl;
-
   try {
-    parsedUrl = new URL(backendUrl);
+    validateBackendUrl(backendUrl);
   } catch (err) {
-    log.error('Invalid backend URL. Use http:// or https://');
-    process.exit(1);
-  }
-
-  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-    log.error('Invalid backend URL. Use http:// or https://');
+    log.error(err.message);
     process.exit(1);
   }
 

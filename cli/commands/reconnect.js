@@ -33,6 +33,11 @@ module.exports = function () {
       return;
     }
 
-    log.error('Backend unreachable');
+    if (backendStatus === 'invalid backend URL') {
+      log.error('Configured backend URL is invalid. Run: shadowapi connect <backend_url>');
+      return;
+    }
+
+    log.error(`Backend unavailable (${backendStatus})`);
   });
 };

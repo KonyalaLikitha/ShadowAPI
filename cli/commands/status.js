@@ -18,16 +18,17 @@ module.exports = function () {
     const contractPath = path.join(process.cwd(), config.contract);
     const contractStatus = fs.existsSync(contractPath) ? 'found' : 'missing';
 
-    console.log('ShadowAPI Status\n');
-    console.log(`Port: ${config.port}`);
-    console.log(`Mode: ${config.mode}`);
-    console.log(`Contract: ${config.contract} (${contractStatus})`);
+    log.info('Status');
+    log.info(`Port: ${config.port}`);
+    log.info(`Mode: ${config.mode}`);
+    log.info(`Contract: ${config.contract} (${contractStatus})`);
 
     if (!config.backend) {
-      console.log('Backend: not configured');
+      log.info('Backend: not configured');
+      return;
     } else {
       checkBackendConnection(config.backend, (backendStatus) => {
-        console.log(`Backend: ${config.backend} (${backendStatus})`);
+        log.info(`Backend: ${config.backend} (${backendStatus})`);
       });
     }
   } catch (err) {
