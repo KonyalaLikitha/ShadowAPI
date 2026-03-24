@@ -36,8 +36,6 @@ function attemptForward(target, req, res, mode, routes, retries, fallback) {
 
     stats.proxied++;
     res.locals.source = 'real';
-    res.setHeader('x-shadowapi-source', 'real');
-    res.setHeader('x-shadowapi-mode', mode);
 
     if (req.method === 'GET') {
       const chunks = [];
@@ -49,11 +47,22 @@ function attemptForward(target, req, res, mode, routes, retries, fallback) {
           validateResponse(target.pathname, routes, body);
         } catch { /* non-JSON body — skip validation */ }
 
-        res.writeHead(proxyRes.statusCode, proxyRes.headers);
+        // merge backend headers but always stamp shadowapi headers on top
+        const outHeaders = {
+          ...proxyRes.headers,
+          'x-shadowapi-source': 'real',
+          'x-shadowapi-mode': mode,
+        };
+        res.writeHead(proxyRes.statusCode, outHeaders);
         res.end(raw);
       });
     } else {
-      res.writeHead(proxyRes.statusCode, proxyRes.headers);
+      const outHeaders = {
+        ...proxyRes.headers,
+        'x-shadowapi-source': 'real',
+        'x-shadowapi-mode': mode,
+      };
+      res.writeHead(proxyRes.statusCode, outHeaders);
       proxyRes.pipe(res, { end: true });
     }
   });
