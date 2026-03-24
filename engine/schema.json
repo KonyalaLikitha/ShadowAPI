@@ -1,40 +1,27 @@
 {
   "routes": [
-    {
-      "method": "GET",
-      "path": "/users"
-    },
-    {
-      "method": "POST", 
-      "path": "/users"
-    },
-    {
-      "method": "GET",
-      "path": "/orders"
-    },
-    {
-      "method": "GET",
-      "path": "/users/:id"
-    },
-    {
-      "method": "PUT",
-      "path": "/users/:id"
-    },
-    {
-      "method": "DELETE",
-      "path": "/users/:id"
-    }
+    { "method": "GET",    "path": "/api/users" },
+    { "method": "POST",   "path": "/api/users" },
+    { "method": "GET",    "path": "/api/users/:id" },
+    { "method": "PUT",    "path": "/api/users/:id" },
+    { "method": "DELETE", "path": "/api/users/:id" },
+    { "method": "GET",    "path": "/api/products" },
+    { "method": "GET",    "path": "/api/products/:id" },
+    { "method": "GET",    "path": "/api/hello" }
   ],
   "fields": {
     "users": {
-      "id": "number",
-      "name": "string",
-      "email": "string",
-      "age": "number",
+      "name":   "string",
+      "email":  "email",
+      "age":    "number",
       "active": "boolean"
     },
+    "products": {
+      "name":     "string",
+      "price":    "number",
+      "inStock":  "boolean"
+    },
     "orders": {
-      "id": "number",
       "userId": "number",
       "amount": "number",
       "status": "string"

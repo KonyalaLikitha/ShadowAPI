@@ -1,4 +1,6 @@
 function simulateError(method = 'GET') {
+  if (process.env.NODE_ENV === 'test') return null;
+
   const random = Math.random();
   
   if (random < 0.05) {

@@ -1,33 +1,29 @@
 const { sendStatus } = require('./statusCodes');
+const { handleMockRequest } = require('../engine');
 
 function registerRoutes(app, routes, mode) {
   routes.forEach(route => {
-    const { method, path, response, status = 200 } = route;
+    const { method, path } = route;
 
     app[method.toLowerCase()](path, (req, res) => {
       res.setHeader('x-shadowapi-source', 'mock');
-      res.setHeader('x-shadowapi-mode', mode || process.env.SHADOW_MODE || 'mock');
+      res.setHeader('x-shadowapi-mode', mode || 'mock');
 
-      if (status === 204) return res.status(204).end();
+      const result = handleMockRequest(req);
 
-      const data =
-        typeof response === 'function'
-          ? response(req.params, req.body, req.query)
-          : path.includes(':')
-          ? resolveParams(response, req.params)
-          : response;
+      if (!result) {
+        return res.status(502).json({ error: 'No mock available' });
+      }
 
-      sendStatus(res, status, data);
+      if (result.status === 204 || result.body === null) {
+        return res.status(result.status || 204).end();
+      }
+
+      sendStatus(res, result.status, result.body);
     });
 
     console.log(`\x1b[32m✓\x1b[0m Registered ${method.toUpperCase()} ${path}`);
   });
-}
-
-function resolveParams(response, params) {
-  const data = { ...response };
-  Object.keys(params).forEach(k => { if (data[k] !== undefined) data[k] = params[k]; });
-  return data;
 }
 
 module.exports = registerRoutes;

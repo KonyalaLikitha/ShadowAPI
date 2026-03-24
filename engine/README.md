@@ -205,6 +205,3 @@ Example — adding `products`:
     "inStock": "boolean"
   }
 }
-```
-
-No code changes needed — the engine picks it up automatically.
