@@ -48,7 +48,6 @@ function logger(req, res, next) {
   res.on('finish', () => {
     const duration = Date.now() - start;
     const source = res.locals.source || 'mock';
-    console.log(`[gateway] ${req.method} ${req.originalUrl} → ${source}`);
     console.log(
       formatLog({
         method: req.method,

@@ -11,7 +11,7 @@ const corsMiddleware = (req, res, next) => {
 };
 
 const modeTag = (req, res, next) => {
-  res.locals.source = process.env.SHADOW_MODE === 'real' ? 'real' : 'mock';
+  res.locals.source = 'mock'; // proxy will override to 'real' if forwarded
   req.shadowapi = { params: req.params, query: req.query, timestamp: Date.now() };
   next();
 };
