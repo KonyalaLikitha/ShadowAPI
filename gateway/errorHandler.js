@@ -21,6 +21,7 @@ function notFoundHandler(req, res) {
   const code = 404;
   const { message } = resolveStatus(code);
   res.setHeader('x-shadowapi-source', 'mock');
+  res.setHeader('x-shadowapi-mode', res.locals.mode || 'mock');
   res.status(code).json({
     status: code,
     message,
