@@ -5,6 +5,15 @@ function registerRoutes(app, routes, mode) {
   routes.forEach(route => {
     const { method, path } = route;
 
+    // also handle HEAD requests for every GET route
+    if (method === 'GET') {
+      app.head(path, (req, res) => {
+        res.setHeader('x-shadowapi-source', 'mock');
+        res.setHeader('x-shadowapi-mode', mode || 'mock');
+        res.status(200).end();
+      });
+    }
+
     app[method.toLowerCase()](path, (req, res) => {
       res.setHeader('x-shadowapi-source', 'mock');
       res.setHeader('x-shadowapi-mode', mode || 'mock');
