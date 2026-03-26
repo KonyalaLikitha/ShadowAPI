@@ -28,7 +28,8 @@ function registerRoutes(app, routes, mode) {
         return res.status(result.status || 204).end();
       }
 
-      sendStatus(res, result.status, result.body);
+      // simulate realistic network latency on mock responses
+      setTimeout(() => sendStatus(res, result.status, result.body), 100);
     });
 
     console.log(`\x1b[32m✓\x1b[0m Registered ${method.toUpperCase()} ${path}`);
