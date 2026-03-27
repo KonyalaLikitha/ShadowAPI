@@ -1,22 +1,54 @@
-body{
-font-family: Arial, sans-serif;
-margin: 40px;
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
 }
 
-h1{
-color: #333;
+h1 { color: #333; }
+
+.container { max-width: 600px; }
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-button{
-padding: 10px 15px;
-background-color: #0078d7;
-color: white;
-border: none;
-cursor: pointer;
+button {
+  padding: 10px 15px;
+  background-color: #0078d7;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
-button:hover
+button:hover { background-color: #005fa3; }
 
-li{
-margin: 5px 0;
+li { margin: 5px 0; }
+
+.badge-mock {
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #ef6c00;
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.badge-real {
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #2e7d32;
+  color: white;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.badge-unknown {
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #999;
+  color: white;
+  font-size: 13px;
 }

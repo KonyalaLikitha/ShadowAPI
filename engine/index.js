@@ -1,21 +1,18 @@
-const schema = require("./schema.json");
-const { simulateError } = require("./errorSimulation.js");
-const { generateObjects, generateSingle } = require("./dataGenerator");
-const { validateMock } = require("./responseValidator");
-const store = require("./stateStore");
+const schema = require('./schema.json');
+const { simulateError } = require('./errorSimulation.js');
+const { generateObjects, generateSingle } = require('./dataGenerator');
+const { validateMock } = require('./responseValidator');
+const store = require('./stateStore');
 
-// Called directly by gateway/router.js — returns { status, body }
 function handleMockRequest(req) {
   const method = req.method;
   const path   = req.path;
   const body   = req.body || {};
 
-  // /api/hello — always works, good for demo
   if (path === '/api/hello' && method === 'GET') {
     return { status: 200, body: { message: 'Hello from Mock Engine', source: 'mock' } };
   }
 
-  // /api/error — intentional error simulation endpoint
   if (path === '/api/error') {
     return { status: 500, body: { error: 'Internal Server Error (Mock)' } };
   }
@@ -26,7 +23,6 @@ function handleMockRequest(req) {
     return { status: error.status, body: error.response };
   }
 
-  // strip /api prefix so engine resource logic works: /api/users → /users
   const strippedPath = path.replace(/^\/api/, '') || '/';
   const idMatch      = strippedPath.match(/^\/([^/]+)\/(\d+)$/);
   const resource     = strippedPath.split('/')[1] || 'users';
@@ -41,21 +37,18 @@ function handleMockRequest(req) {
 
   if (!routeExists) {
     console.log(`[Engine] No route for ${method} ${path} → forward`);
-    return null; // null = gateway should forward to backend
+    return null;
   }
-
-  let data;
 
   if (method === 'GET' && !idMatch) {
     let items = store.get(resource);
     if (!items || items.length === 0) items = generateObjects(resource, 5);
-    data = { [resource]: items };
-    return { status: 200, body: { success: true, data } };
+    return { status: 200, body: { success: true, data: { [resource]: items } } };
   }
 
   if (method === 'GET' && idMatch) {
     const id   = idMatch[2];
-    let   item = store.getById(resource, id) || generateSingle(resource, { id: Number(id) });
+    const item = store.getById(resource, id) || generateSingle(resource, { id: Number(id) });
     return { status: 200, body: { success: true, data: item } };
   }
 
@@ -80,7 +73,6 @@ function handleMockRequest(req) {
   return { status: 404, body: { error: 'Not Found (Mock)' } };
 }
 
-// Legacy internal function — kept for engine tests + fallbackHandler
 function handleRequest(req, realSample = null) {
   const { path, method, body } = req;
   console.log(`[Engine] ${method} ${path} received`);
@@ -136,4 +128,3 @@ function handleRequest(req, realSample = null) {
 }
 
 module.exports = { handleMockRequest, handleRequest };
-

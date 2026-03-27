@@ -1,26 +1,29 @@
-const button = document.getElementById("loadUsers");
-const usersList = document.getElementById("users");
+const BASE_URL = 'http://localhost:3000';
 
-button.addEventListener("click", () => {
+const button = document.getElementById('loadUsers');
+const usersList = document.getElementById('users');
+const sourceTag = document.getElementById('sourceTag');
 
-fetch("https://jsonplaceholder.typicode.com/users")
-.then(res => res.json())
-.then(users => {
+button.addEventListener('click', () => {
+  usersList.innerHTML = 'Loading...';
 
-
-  usersList.innerHTML = "";
-
-  users.forEach(user => {
-
-    const li = document.createElement("li");
-    li.textContent = user.name;
-
-    usersList.appendChild(li);
-
-  });
-
-})
-.catch(err => console.error(err));
-
-
+  fetch(`${BASE_URL}/api/users`)
+    .then(res => {
+      const source = res.headers.get('x-shadowapi-source') || 'unknown';
+      sourceTag.textContent = `Source: ${source.toUpperCase()}`;
+      sourceTag.className = source === 'real' ? 'badge-real' : 'badge-mock';
+      return res.json();
+    })
+    .then(json => {
+      const users = json.data?.users || json.users || [];
+      usersList.innerHTML = '';
+      users.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = `${user.id} — ${user.name}`;
+        usersList.appendChild(li);
+      });
+    })
+    .catch(err => {
+      usersList.innerHTML = 'Error: ' + err.message;
+    });
 });

@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-
 <html>
 <head>
   <meta charset="UTF-8">
   <title>ShadowAPI Demo</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-<h1>ShadowAPI Demo Frontend</h1>
+<div class="container">
+  <h1>ShadowAPI Demo</h1>
+  <p>Frontend hitting <code>localhost:3000</code> — watch it switch between MOCK and REAL.</p>
 
-<p>This demo page generates API requests that can be inspected using the ShadowAPI DevTools extension.</p>
+  <div class="controls">
+    <button id="loadUsers">Load Users</button>
+    <span id="sourceTag" class="badge-unknown">Source: —</span>
+  </div>
 
-<button id="loadUsers">Load Users</button>
-
-<ul id="users"></ul>
+  <ul id="users"></ul>
+</div>
 
 <script src="app.js"></script>
-
 </body>
 </html>
