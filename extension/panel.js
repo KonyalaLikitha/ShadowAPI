@@ -6,254 +6,196 @@ const modeStatusEl = document.getElementById("modeBadge");
 const toggleBtn = document.getElementById("toggle");
 const clearBtn = document.getElementById("clear");
 const collapseBtn = document.getElementById("collapse");
-
 const logsEl = document.getElementById("logs");
+const emptyStateEl = document.getElementById("emptyState");
 const requestCountEl = document.getElementById("requestCount");
 const searchInput = document.getElementById("searchInput");
 
 function updateModeUI() {
-
   modeStatusEl.textContent = currentMode;
-
-  modeStatusEl.className =
-    `mode-badge mode-${currentMode.toLowerCase()}`;
-
-  toggleBtn.textContent =
-    currentMode === "REAL"
-      ? "Switch to Mock"
-      : "Switch to Real";
+  modeStatusEl.className = `mode-badge mode-${currentMode.toLowerCase()}`;
+  toggleBtn.textContent = currentMode === "REAL" ? "Switch to Mock" : "Switch to Real";
 }
 
 function updateRequestCount() {
   requestCountEl.textContent = requestCount;
 }
 
-function createRequestEntry(request) {
+function detectSource(request) {
+  const headers = request.response.headers || [];
+  let source = "UNKNOWN";
 
-const entry = document.createElement("div");
-entry.className = "log-entry";
+  headers.forEach(function (h) {
+    if (h.name.toLowerCase() === "x-shadowapi-source") {
+      source = h.value.toUpperCase();
+    }
+  });
 
-const header = document.createElement("div");
-header.className = "log-header";
+  if (source === "UNKNOWN" && request._shadowSource) {
+    source = request._shadowSource;
+  }
 
-const method = document.createElement("span");
-const methodType = request.request.method;
+  if (source === "UNKNOWN") {
+    source = currentMode;
+  }
 
-method.className = `method method-${methodType.toLowerCase()}`;
-method.textContent = methodType;
-
-method.textContent = request.request.method;
-
-const status = document.createElement("span");
-status.className = "status";
-status.textContent = request.response.status;
-
-const url = document.createElement("span");
-url.className = "log-url";
-url.textContent = request.request.url;
-
-
-const mode = document.createElement("span");
-mode.className = `mode-label ${currentMode.toLowerCase()}`;
-mode.textContent = currentMode === "MOCK" ? "MOCK API" : "REAL API";
-
-header.appendChild(method);
-
-header.appendChild(document.createTextNode(" "));
-
-header.appendChild(status);
-
-header.appendChild(document.createTextNode(" "));
-
-header.appendChild(mode);
-
-header.appendChild(document.createTextNode(" "));
-
-header.appendChild(url);
-
-
-const details = document.createElement("div");
-details.className = "log-details";
-
-entry.appendChild(header);
-entry.appendChild(details);
-
-header.addEventListener(
-"click",
-() => toggleDetails(entry, request)
-);
-
-return entry;
+  return source;
 }
 
+function createRequestEntry(request) {
+  const source = detectSource(request);
+
+  const entry = document.createElement("div");
+  entry.className = "log-entry";
+
+  const header = document.createElement("div");
+  header.className = "log-header";
+
+  const methodType = request.request.method;
+
+  const method = document.createElement("span");
+  method.className = "method method-" + methodType.toLowerCase();
+  method.textContent = methodType;
+
+  const status = document.createElement("span");
+  status.className = "status";
+  status.textContent = request.response.status;
+
+  const badge = document.createElement("span");
+  badge.textContent = source === "MOCK" ? "MOCK API" : "REAL API";
+  badge.className = source === "MOCK" ? "badge-mock" : "badge-real";
+
+  const url = document.createElement("span");
+  url.className = "log-url";
+  url.textContent = request.request.url;
+
+  header.appendChild(method);
+  header.appendChild(status);
+  header.appendChild(badge);
+  header.appendChild(url);
+
+  const details = document.createElement("div");
+  details.className = "log-details";
+
+  entry.appendChild(header);
+  entry.appendChild(details);
+
+  header.addEventListener("click", function () {
+    toggleDetails(entry, request);
+  });
+
+  return entry;
+}
 
 function toggleDetails(entry, request) {
-
   const details = entry.querySelector(".log-details");
 
   if (details.classList.contains("expanded")) {
-
     details.classList.remove("expanded");
+    details.innerHTML = "";
+    return;
+  }
+
+  request.getContent(function (content) {
+    const body = document.createElement("pre");
+    try {
+      body.textContent = JSON.stringify(JSON.parse(content), null, 2);
+    } catch (e) {
+      body.textContent = content || "No response body";
+    }
+
+    const reqHeaders = document.createElement("pre");
+    reqHeaders.textContent = JSON.stringify(request.request.headers, null, 2);
 
     details.innerHTML = "";
+    details.appendChild(body);
+    details.appendChild(reqHeaders);
+    details.classList.add("expanded");
+  });
+}
 
-  } else {
+function renderLogs() {
+  logsEl.innerHTML = "";
 
-    const container = document.createElement("div");
-
-    request.getContent((content) => {
-
-      const body = document.createElement("pre");
-
-      try {
-
-        const parsed = JSON.parse(content);
-
-        body.textContent =
-          JSON.stringify(parsed, null, 2);
-
-      } catch {
-
-        body.textContent =
-          content || "No response body";
-      }
-
-      container.appendChild(body);
-
-      const headers = document.createElement("pre");
-
-      headers.textContent =
-        JSON.stringify(
-          request.request.headers,
-          null,
-          2
-        );
-
-      container.appendChild(headers);
-
-      details.innerHTML = "";
-
-      details.appendChild(container);
-
-      details.classList.add("expanded");
-    });
+  const urls = [];
+  for (var key in endpointMap) {
+    urls.push(key);
   }
+
+  if (urls.length === 0) {
+    emptyStateEl.style.display = "block";
+    return;
+  }
+
+  emptyStateEl.style.display = "none";
+
+  urls.forEach(function (url) {
+    const group = document.createElement("div");
+    group.className = "endpoint-group";
+
+    const title = document.createElement("div");
+    title.className = "endpoint-title";
+    title.textContent = url + " (" + endpointMap[url].length + ")";
+
+    group.appendChild(title);
+
+    endpointMap[url].forEach(function (req) {
+      group.appendChild(createRequestEntry(req));
+    });
+
+    logsEl.appendChild(group);
+  });
 }
 
 function addRequestLog(request) {
+  request._shadowSource = currentMode;
 
-const url = request.request.url;
+  const url = request.request.url;
+  if (!endpointMap[url]) {
+    endpointMap[url] = [];
+  }
+  endpointMap[url].push(request);
 
-if (!endpointMap[url]) {
-endpointMap[url] = [];
-}
-
-endpointMap[url].push(request);
-
-renderLogs();   // only this is needed
-
-requestCount++;
-updateRequestCount();
-}
-
-
-function renderLogs() {
-
-logsEl.innerHTML = "";
-
-Object.keys(endpointMap).forEach((url) => {
-
-```
-const group = document.createElement("div");
-group.className = "endpoint-group";
-
-const title = document.createElement("div");
-title.className = "endpoint-title";
-title.textContent = url + " (" + endpointMap[url].length + ")";
-
-group.appendChild(title);
-
-endpointMap[url].forEach((req) => {
-  const entry = createRequestEntry(req);
-  group.appendChild(entry);
-});
-
-logsEl.appendChild(group);
-```
-
-});
-
-}
-
- 
-function clearLogs() {
-
-  logsEl.innerHTML = "";
-
-  requestCount = 0;
-
+  requestCount++;
   updateRequestCount();
+  renderLogs();
+}
+
+function clearLogs() {
+  for (var key in endpointMap) {
+    delete endpointMap[key];
+  }
+  requestCount = 0;
+  updateRequestCount();
+  renderLogs();
 }
 
 function collapseAll() {
-
-  document
-    .querySelectorAll(".log-details")
-    .forEach((d) => {
-
-      d.classList.remove("expanded");
-
-      d.innerHTML = "";
-    });
+  document.querySelectorAll(".log-details").forEach(function (d) {
+    d.classList.remove("expanded");
+    d.innerHTML = "";
+  });
 }
 
-searchInput.addEventListener("input", () => {
-
-  const filter =
-    searchInput.value.toLowerCase();
-
-  const logs =
-    document.querySelectorAll(".log-entry");
-
-  logs.forEach((log) => {
-
-    const text =
-      log.innerText.toLowerCase();
-
-    log.style.display =
-      text.includes(filter)
-        ? "block"
-        : "none";
+searchInput.addEventListener("input", function () {
+  const filter = searchInput.value.toLowerCase();
+  document.querySelectorAll(".log-entry").forEach(function (log) {
+    log.style.display = log.innerText.toLowerCase().includes(filter) ? "block" : "none";
   });
 });
 
-chrome.storage.local.get(["mode"], (result) => {
-
-  currentMode = result.mode || "REAL";
-
-  updateModeUI();
-});
-
-toggleBtn.addEventListener("click", () => {
-
-  currentMode =
-    currentMode === "REAL"
-      ? "MOCK"
-      : "REAL";
-
+toggleBtn.addEventListener("click", function () {
+  currentMode = currentMode === "REAL" ? "MOCK" : "REAL";
   chrome.storage.local.set({ mode: currentMode });
-
   updateModeUI();
 });
 
 clearBtn.addEventListener("click", clearLogs);
-
 collapseBtn.addEventListener("click", collapseAll);
 
-chrome.devtools.network.onRequestFinished.addListener(
-  (request) => {
+chrome.storage.local.get(["mode"], function (result) {
+  currentMode = result.mode || "REAL";
+  updateModeUI();
+});
 
-    addRequestLog(request);
-
-  }
-);
+chrome.devtools.network.onRequestFinished.addListener(addRequestLog);
