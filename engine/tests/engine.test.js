@@ -2,6 +2,7 @@ const { handleRequest } = require('../index');
 const store = require('../stateStore');
 const { generateObjects, generateSingle, generateField } = require('../dataGenerator');
 const { simulateError } = require('../errorSimulation');
+const errorSim = require('../errorSimulation');
 const { handleBackendFailure, shouldFallback } = require('../fallbackHandler');
 const { validateMock, generateCompatibleMock } = require('../responseValidator');
 
@@ -122,7 +123,7 @@ describe('errorSimulation', () => {
 
 describe('handleRequest — routing', () => {
   test('GET /users returns mock collection', () => {
-    jest.spyOn(require('../errorSimulation'), 'simulateError').mockReturnValue(null);
+    jest.spyOn(errorSim, 'simulateError').mockReturnValue(null);
     const result = handleRequest({ path: '/users', method: 'GET' });
     expect(['mock', 'forward']).toContain(result.type);
     if (result.type === 'mock') {
@@ -132,8 +133,7 @@ describe('handleRequest — routing', () => {
   });
 
   test('GET /users/:id returns single user', () => {
-    jest.spyOn(require('../errorSimulation'), 'simulateError').mockReturnValue(null);
-    // Add a fresh user so we have a guaranteed id
+    jest.spyOn(errorSim, 'simulateError').mockReturnValue(null);
     const added = store.add('users', { name: 'ForGet' });
     const result = handleRequest({ path: `/users/${added.id}`, method: 'GET' });
     expect(result.type).toBe('mock');
@@ -142,7 +142,7 @@ describe('handleRequest — routing', () => {
   });
 
   test('POST /users creates and returns item', () => {
-    jest.spyOn(require('../errorSimulation'), 'simulateError').mockReturnValue(null);
+    jest.spyOn(errorSim, 'simulateError').mockReturnValue(null);
     const result = handleRequest({ path: '/users', method: 'POST', body: { name: 'Alice' } });
     expect(result.type).toBe('mock');
     expect(result.status).toBe(200);
@@ -150,8 +150,7 @@ describe('handleRequest — routing', () => {
   });
 
   test('PUT /users/:id returns updated item', () => {
-    jest.spyOn(require('../errorSimulation'), 'simulateError').mockReturnValue(null);
-    // Add a fresh item so we have a stable id to update
+    jest.spyOn(errorSim, 'simulateError').mockReturnValue(null);
     const added = store.add('users', { name: 'ForPut' });
     const result = handleRequest({ path: `/users/${added.id}`, method: 'PUT', body: { name: 'Updated' } });
     expect(result.type).toBe('mock');
@@ -160,25 +159,21 @@ describe('handleRequest — routing', () => {
   });
 
   test('DELETE /users/:id returns success', () => {
-    jest.spyOn(require('../errorSimulation'), 'simulateError').mockReturnValue(null);
+    jest.spyOn(errorSim, 'simulateError').mockReturnValue(null);
     const result = handleRequest({ path: '/users/1', method: 'DELETE' });
     expect(result.type).toBe('mock');
     jest.restoreAllMocks();
   });
 
   test('unknown route returns forward type', () => {
-    jest.spyOn(require('../errorSimulation'), 'simulateError').mockReturnValue(null);
+    jest.spyOn(errorSim, 'simulateError').mockReturnValue(null);
     const result = handleRequest({ path: '/unknown', method: 'GET' });
     expect(result.type).toBe('forward');
     jest.restoreAllMocks();
   });
 
   test('simulated error short-circuits routing and returns error shape', () => {
-    // index.js destructures simulateError at load time, so we verify the contract
-    // via errorSimulation directly — the integration is covered by the error path in handleRequest
-    const errorSim = require('../errorSimulation');
     const err = errorSim.simulateError('GET');
-    // Whether null or an error object, the shape must be valid
     if (err !== null) {
       expect(err).toHaveProperty('status');
       expect([400, 429, 500, 503]).toContain(err.status);
@@ -204,7 +199,7 @@ describe('fallbackHandler', () => {
   });
 
   test('handleBackendFailure on 500 returns fallback type', () => {
-    jest.spyOn(require('../errorSimulation'), 'simulateError').mockReturnValue(null);
+    jest.spyOn(errorSim, 'simulateError').mockReturnValue(null);
     const result = handleBackendFailure(
       { status: 500 },
       { path: '/users', method: 'GET' }

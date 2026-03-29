@@ -25,7 +25,8 @@ function handleMockRequest(req) {
 
   const strippedPath = path.replace(/^\/api/, '') || '/';
   const idMatch      = strippedPath.match(/^\/([^/]+)\/(\d+)$/);
-  const resource     = strippedPath.split('/')[1] || 'users';
+  const rawResource  = strippedPath.split('/')[1] || 'users';
+  const resource     = rawResource.replace(/[^a-zA-Z0-9_-]/g, '');
 
   const routeExists = schema.routes.some(r => {
     if (r.method !== method) return false;
