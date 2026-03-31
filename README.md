@@ -1,5 +1,11 @@
 # ShadowAPI
 
+<p align="center">
+  <img src="docs/images/ShadowAPI LOGO.jpeg" alt="ShadowAPI Logo" height="100" />
+</p>
+
+<p align="center"><b>No backend? No problem.</b></p>
+
 > A local-first development gateway that lets frontend teams build against realistic mock APIs — and seamlessly switch to a real backend the moment it becomes available.
 
 ![Demo](docs/images/demo.gif)
