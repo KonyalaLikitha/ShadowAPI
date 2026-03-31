@@ -8,7 +8,7 @@
 
 > A local-first development gateway that lets frontend teams build against realistic mock APIs — and seamlessly switch to a real backend the moment it becomes available.
 
-![Demo](docs/images/ShadowAPI Video (1).gif)
+![Demo](docs/images/ShadowAPI%20Video%20(1).gif)
 
 ---
 
