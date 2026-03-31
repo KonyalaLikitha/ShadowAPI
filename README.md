@@ -10,6 +10,10 @@
 
 ![Demo](docs/images/demo.gif)
 
+<video width="100%" controls>
+  <source src="docs/images/ShadowAPI Video.mp4" type="video/mp4">
+</video>
+
 ---
 
 ## What is ShadowAPI?
